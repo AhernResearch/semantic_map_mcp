@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0.0",
+  "scene_id": "demo-scene",
+  "snapshot_id": "demo-v1",
+  "name": "结构样例，不是实际扫描",
+  "coordinate_frame": {
+    "frame_id": "demo-yup",
+    "unit": "m",
+    "up_axis": "y"
+  },
+  "bounds_xyz": {
+    "min": [
+      0,
+      0,
+      -5
+    ],
+    "max": [
+      5,
+      3,
+      0
+    ]
+  },
+  "types": [
+    {
+      "type_id": "cabinet",
+      "name": "柜子",
+      "aliases": [
+        "储物柜"
+      ]
+    }
+  ],
+  "rooms": [
+    {
+      "room_id": "R01",
+      "name": "示例房间",
+      "kind": "room",
+      "bounds_xz": [
+        0,
+        -5,
+        5,
+        0
+      ],
+      "polygon_xz": null,
+      "boundary_source": "synthetic_example"
+    }
+  ],
+  "objects": [
+    {
+      "object_id": "demo-01",
+      "source_id": "demo-01",
+      "type_ids": [
+        "cabinet"
+      ],
+      "label": "柜子",
+      "aliases": [],
+      "description": null,
+      "room_ids": [
+        "R01"
+      ],
+      "region_assignment_source": "synthetic_example",
+      "bbox": {
+        "min": [
+          1,
+          0,
+          -3
+        ],
+        "max": [
+          2,
+          2,
+          -2
+        ]
+      },
+      "center_xyz": [
+        1.5,
+        1,
+        -2.5
+      ],
+      "geometry_asset_id": null,
+      "feature_refs": [],
+      "observation_links": [],
+      "attributes": [],
+      "identity_status": "unresolved",
+      "entity_id": null,
+      "source_links": [],
+      "provenance": [
+        "人工结构样例，无图片/特征，不证明视觉能力"
+      ]
+    }
+  ],
+  "observations": [],
+  "assets": [],
+  "feature_spaces": [],
+  "background_asset_id": null,
+  "provenance": [
+    "结构样例；不属于M-floor；只有框和标签"
+  ]
+}

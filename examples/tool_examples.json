@@ -1,0 +1,319 @@
+[
+  {
+    "note": "静态契约示例，未执行工具",
+    "tool": "list_scene",
+    "input": {},
+    "output": {
+      "schema_version": "1.0.0",
+      "tool": "list_scene",
+      "scene_id": "demo-scene",
+      "snapshot_id": "demo-v1",
+      "status": "ok",
+      "data": {
+        "scene_name": "结构样例，不是实际扫描",
+        "rooms": [
+          {
+            "room_id": "R01",
+            "name": "示例房间",
+            "kind": "room",
+            "object_count": 1,
+            "type_ids": [
+              "cabinet"
+            ]
+          }
+        ],
+        "semantic_types": [
+          {
+            "type_id": "cabinet",
+            "name": "柜子",
+            "aliases": [
+              "储物柜"
+            ],
+            "object_count": 1
+          }
+        ],
+        "object_count": 1,
+        "count_unit": "object_record",
+        "capabilities": {
+          "label_search": {
+            "status": "available",
+            "reason": null
+          },
+          "visual_search": {
+            "status": "unavailable",
+            "reason": "结构样例无特征或文本编码器"
+          },
+          "object_images": {
+            "status": "unavailable",
+            "reason": "无图片"
+          }
+        },
+        "coordinate_frame": {
+          "frame_id": "demo-yup",
+          "unit": "m",
+          "up_axis": "y"
+        },
+        "query_policy": {
+          "policy_id": "default-v1",
+          "visual_top_k": 10,
+          "max_queries": 4,
+          "max_inspect_ids": 8
+        }
+      },
+      "media": [],
+      "limitations": [
+        "只有结构样例"
+      ],
+      "errors": []
+    }
+  },
+  {
+    "note": "演示部分结果；没有生成地图，不伪造成功媒体",
+    "tool": "view_map",
+    "input": {
+      "room_ids": [
+        "R01"
+      ],
+      "queries": [
+        "柜子"
+      ]
+    },
+    "output": {
+      "schema_version": "1.0.0",
+      "tool": "view_map",
+      "scene_id": "demo-scene",
+      "snapshot_id": "demo-v1",
+      "status": "partial",
+      "data": {
+        "room_ids": [
+          "R01"
+        ],
+        "groups": [
+          {
+            "query": "柜子",
+            "label_match_ids": [
+              "demo-01"
+            ],
+            "visual_match_ids": [],
+            "candidate_ids": [
+              "demo-01"
+            ],
+            "channels_used": [
+              "label"
+            ],
+            "visual_top_k": 10,
+            "truncated": false,
+            "encoded_query": null
+          }
+        ],
+        "candidates": [
+          {
+            "object_id": "demo-01",
+            "label": "柜子",
+            "room_ids": [
+              "R01"
+            ],
+            "matched_queries": [
+              "柜子"
+            ],
+            "match_basis": [
+              "label_exact"
+            ],
+            "scores": [
+              {
+                "query": "柜子",
+                "label_rank": 1,
+                "visual_cosine": null,
+                "fusion_score": 0.01639344262295082
+              }
+            ]
+          }
+        ],
+        "maps": [],
+        "unshown_ids": [
+          "demo-01"
+        ],
+        "record_count": 1,
+        "policy_id": "default-v1"
+      },
+      "media": [],
+      "limitations": [
+        "视觉通道不可用",
+        "示例没有实际渲染图"
+      ],
+      "errors": [
+        {
+          "code": "feature_unavailable",
+          "message": "没有视觉索引",
+          "affected_ids": []
+        },
+        {
+          "code": "render_unavailable",
+          "message": "示例未渲染",
+          "affected_ids": [
+            "demo-01"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "演示有对象但缺图",
+    "tool": "inspect_objects",
+    "input": {
+      "ids": [
+        "demo-01"
+      ]
+    },
+    "output": {
+      "schema_version": "1.0.0",
+      "tool": "inspect_objects",
+      "scene_id": "demo-scene",
+      "snapshot_id": "demo-v1",
+      "status": "partial",
+      "data": {
+        "objects": [
+          {
+            "object_id": "demo-01",
+            "label": "柜子",
+            "type_ids": [
+              "cabinet"
+            ],
+            "room_ids": [
+              "R01"
+            ],
+            "center_xyz": [
+              1.5,
+              1,
+              -2.5
+            ],
+            "bbox": {
+              "min": [
+                1,
+                0,
+                -3
+              ],
+              "max": [
+                2,
+                2,
+                -2
+              ]
+            },
+            "attributes": [],
+            "identity_status": "unresolved",
+            "entity_id": null,
+            "source_links": [],
+            "source_refs": [
+              "synthetic_example"
+            ],
+            "evidence": [],
+            "limitations": [
+              "无关联图片"
+            ]
+          }
+        ],
+        "missing_ids": [],
+        "omitted_ids": []
+      },
+      "media": [],
+      "limitations": [
+        "无图片"
+      ],
+      "errors": [
+        {
+          "code": "asset_missing",
+          "message": "没有已登记图片",
+          "affected_ids": [
+            "demo-01"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "note": "Recall only; same candidates as view_map, no rendered map.",
+    "tool": "search_candidates",
+    "input": {
+      "room_ids": [
+        "R01"
+      ],
+      "queries": [
+        "柜子"
+      ]
+    },
+    "output": {
+      "schema_version": "1.0.0",
+      "tool": "search_candidates",
+      "scene_id": "demo-scene",
+      "snapshot_id": "demo-v1",
+      "status": "partial",
+      "data": {
+        "room_ids": [
+          "R01"
+        ],
+        "groups": [
+          {
+            "query": "柜子",
+            "label_match_ids": [
+              "demo-01"
+            ],
+            "visual_match_ids": [],
+            "candidate_ids": [
+              "demo-01"
+            ],
+            "channels_used": [
+              "label"
+            ],
+            "visual_top_k": 10,
+            "truncated": false,
+            "encoded_query": null
+          }
+        ],
+        "candidates": [
+          {
+            "object_id": "demo-01",
+            "label": "柜子",
+            "room_ids": [
+              "R01"
+            ],
+            "matched_queries": [
+              "柜子"
+            ],
+            "match_basis": [
+              "label_exact"
+            ],
+            "scores": [
+              {
+                "query": "柜子",
+                "label_rank": 1,
+                "visual_cosine": null,
+                "fusion_score": 0.01639344262295082
+              }
+            ]
+          }
+        ],
+        "record_count": 1,
+        "policy_id": "default-v1"
+      },
+      "media": [],
+      "limitations": [
+        "视觉通道不可用",
+        "示例没有实际渲染图"
+      ],
+      "errors": [
+        {
+          "code": "feature_unavailable",
+          "message": "没有视觉索引",
+          "affected_ids": []
+        },
+        {
+          "code": "render_unavailable",
+          "message": "示例未渲染",
+          "affected_ids": [
+            "demo-01"
+          ]
+        }
+      ]
+    }
+  }
+]

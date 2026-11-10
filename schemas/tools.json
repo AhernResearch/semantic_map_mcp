@@ -1,0 +1,2912 @@
+{
+  "contract_version": "1.0.0",
+  "scene_binding": "host_bound_snapshot",
+  "tools": [
+    {
+      "name": "list_scene",
+      "description": "查看地图的区域、物体类型和可用查询能力。",
+      "read_only": true,
+      "implementation_status": "local_implemented",
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "$schema": "https://json-schema.org/draft/2020-12/schema"
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "schema_version": {
+            "const": "1.0.0"
+          },
+          "tool": {
+            "const": "list_scene"
+          },
+          "scene_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "snapshot_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "partial",
+              "invalid_request",
+              "not_found",
+              "unavailable"
+            ]
+          },
+          "data": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "scene_name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "rooms": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "room_id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "name": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "kind": {
+                          "enum": [
+                            "room",
+                            "corridor",
+                            "area",
+                            "unassigned"
+                          ]
+                        },
+                        "object_count": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "type_ids": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "uniqueItems": true
+                        }
+                      },
+                      "required": [
+                        "room_id",
+                        "name",
+                        "kind",
+                        "object_count",
+                        "type_ids"
+                      ]
+                    }
+                  },
+                  "semantic_types": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "type_id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "name": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "aliases": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "uniqueItems": true
+                        },
+                        "object_count": {
+                          "type": "integer",
+                          "minimum": 0
+                        }
+                      },
+                      "required": [
+                        "type_id",
+                        "name",
+                        "aliases",
+                        "object_count"
+                      ]
+                    }
+                  },
+                  "object_count": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "count_unit": {
+                    "const": "object_record"
+                  },
+                  "capabilities": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "label_search": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "status": {
+                            "enum": [
+                              "available",
+                              "partial",
+                              "unavailable"
+                            ]
+                          },
+                          "reason": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "status",
+                          "reason"
+                        ]
+                      },
+                      "visual_search": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "status": {
+                            "enum": [
+                              "available",
+                              "partial",
+                              "unavailable"
+                            ]
+                          },
+                          "reason": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "status",
+                          "reason"
+                        ]
+                      },
+                      "object_images": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "status": {
+                            "enum": [
+                              "available",
+                              "partial",
+                              "unavailable"
+                            ]
+                          },
+                          "reason": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "status",
+                          "reason"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "label_search",
+                      "visual_search",
+                      "object_images"
+                    ]
+                  },
+                  "coordinate_frame": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "frame_id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "unit": {
+                        "enum": [
+                          "m"
+                        ]
+                      },
+                      "up_axis": {
+                        "enum": [
+                          "y"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "frame_id",
+                      "unit",
+                      "up_axis"
+                    ]
+                  },
+                  "query_policy": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "policy_id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "visual_top_k": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "max_queries": {
+                        "const": 4
+                      },
+                      "max_inspect_ids": {
+                        "const": 8
+                      }
+                    },
+                    "required": [
+                      "policy_id",
+                      "visual_top_k",
+                      "max_queries",
+                      "max_inspect_ids"
+                    ]
+                  }
+                },
+                "required": [
+                  "scene_name",
+                  "rooms",
+                  "semantic_types",
+                  "object_count",
+                  "count_unit",
+                  "capabilities",
+                  "coordinate_frame",
+                  "query_policy"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "media": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "media_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uri": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "mime_type": {
+                  "enum": [
+                    "image/png",
+                    "image/jpeg"
+                  ]
+                },
+                "width": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "height": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "source_kind": {
+                  "enum": [
+                    "topdown",
+                    "real_camera",
+                    "gs_render",
+                    "evidence_panel"
+                  ]
+                },
+                "object_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
+                },
+                "observation_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "media_id",
+                "uri",
+                "mime_type",
+                "width",
+                "height",
+                "source_kind",
+                "object_ids",
+                "observation_ids"
+              ]
+            }
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "message": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "affected_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "code",
+                "message",
+                "affected_ids"
+              ]
+            }
+          }
+        },
+        "required": [
+          "schema_version",
+          "tool",
+          "scene_id",
+          "snapshot_id",
+          "status",
+          "data",
+          "media",
+          "limitations",
+          "errors"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "enum": [
+                    "ok",
+                    "partial"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "scene_name": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "rooms": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "room_id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "name": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "kind": {
+                            "enum": [
+                              "room",
+                              "corridor",
+                              "area",
+                              "unassigned"
+                            ]
+                          },
+                          "object_count": {
+                            "type": "integer",
+                            "minimum": 0
+                          },
+                          "type_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "uniqueItems": true
+                          }
+                        },
+                        "required": [
+                          "room_id",
+                          "name",
+                          "kind",
+                          "object_count",
+                          "type_ids"
+                        ]
+                      }
+                    },
+                    "semantic_types": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "type_id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "name": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "aliases": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "uniqueItems": true
+                          },
+                          "object_count": {
+                            "type": "integer",
+                            "minimum": 0
+                          }
+                        },
+                        "required": [
+                          "type_id",
+                          "name",
+                          "aliases",
+                          "object_count"
+                        ]
+                      }
+                    },
+                    "object_count": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "count_unit": {
+                      "const": "object_record"
+                    },
+                    "capabilities": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "label_search": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "status": {
+                              "enum": [
+                                "available",
+                                "partial",
+                                "unavailable"
+                              ]
+                            },
+                            "reason": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "status",
+                            "reason"
+                          ]
+                        },
+                        "visual_search": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "status": {
+                              "enum": [
+                                "available",
+                                "partial",
+                                "unavailable"
+                              ]
+                            },
+                            "reason": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "status",
+                            "reason"
+                          ]
+                        },
+                        "object_images": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "status": {
+                              "enum": [
+                                "available",
+                                "partial",
+                                "unavailable"
+                              ]
+                            },
+                            "reason": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "status",
+                            "reason"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "label_search",
+                        "visual_search",
+                        "object_images"
+                      ]
+                    },
+                    "coordinate_frame": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "frame_id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "unit": {
+                          "enum": [
+                            "m"
+                          ]
+                        },
+                        "up_axis": {
+                          "enum": [
+                            "y"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "frame_id",
+                        "unit",
+                        "up_axis"
+                      ]
+                    },
+                    "query_policy": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "policy_id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "visual_top_k": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "max_queries": {
+                          "const": 4
+                        },
+                        "max_inspect_ids": {
+                          "const": 8
+                        }
+                      },
+                      "required": [
+                        "policy_id",
+                        "visual_top_k",
+                        "max_queries",
+                        "max_inspect_ids"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "scene_name",
+                    "rooms",
+                    "semantic_types",
+                    "object_count",
+                    "count_unit",
+                    "capabilities",
+                    "coordinate_frame",
+                    "query_policy"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "data": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "view_map",
+      "description": "显示指定区域和候选物体的空间图。",
+      "read_only": true,
+      "implementation_status": "local_implemented",
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "room_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "maxItems": 16,
+            "uniqueItems": true
+          },
+          "queries": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "maxItems": 4
+          }
+        },
+        "required": [],
+        "$schema": "https://json-schema.org/draft/2020-12/schema"
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "schema_version": {
+            "const": "1.0.0"
+          },
+          "tool": {
+            "const": "view_map"
+          },
+          "scene_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "snapshot_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "partial",
+              "invalid_request",
+              "not_found",
+              "unavailable"
+            ]
+          },
+          "data": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "room_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "uniqueItems": true
+                  },
+                  "groups": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "query": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "label_match_ids": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "uniqueItems": true
+                        },
+                        "visual_match_ids": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "uniqueItems": true
+                        },
+                        "candidate_ids": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "uniqueItems": true
+                        },
+                        "channels_used": {
+                          "type": "array",
+                          "items": {
+                            "enum": [
+                              "label",
+                              "visual"
+                            ]
+                          },
+                          "uniqueItems": true
+                        },
+                        "visual_top_k": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "truncated": {
+                          "type": "boolean"
+                        },
+                        "encoded_query": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "query",
+                        "label_match_ids",
+                        "visual_match_ids",
+                        "candidate_ids",
+                        "channels_used",
+                        "visual_top_k",
+                        "truncated",
+                        "encoded_query"
+                      ]
+                    }
+                  },
+                  "candidates": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "object_id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "label": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "room_ids": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "uniqueItems": true
+                        },
+                        "matched_queries": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "uniqueItems": true
+                        },
+                        "match_basis": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "uniqueItems": true
+                        },
+                        "scores": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                              "query": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "label_rank": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer",
+                                    "minimum": 1
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "visual_cosine": {
+                                "anyOf": [
+                                  {
+                                    "type": "number",
+                                    "minimum": -1,
+                                    "maximum": 1
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "fusion_score": {
+                                "anyOf": [
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "query",
+                              "label_rank",
+                              "visual_cosine",
+                              "fusion_score"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "object_id",
+                        "label",
+                        "room_ids",
+                        "matched_queries",
+                        "match_basis",
+                        "scores"
+                      ]
+                    }
+                  },
+                  "maps": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "map_view_id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "media_id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "room_ids": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "uniqueItems": true
+                        },
+                        "object_ids": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "uniqueItems": true
+                        },
+                        "bounds_xz": {
+                          "type": "array",
+                          "items": {
+                            "type": "number"
+                          },
+                          "minItems": 4,
+                          "maxItems": 4
+                        },
+                        "world_to_pixel": {
+                          "type": "array",
+                          "items": {
+                            "type": "array",
+                            "items": {
+                              "type": "number"
+                            },
+                            "minItems": 3,
+                            "maxItems": 3
+                          },
+                          "minItems": 3,
+                          "maxItems": 3
+                        },
+                        "legend": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                              "query": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "color": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "meaning": {
+                                "type": "string",
+                                "minLength": 1
+                              }
+                            },
+                            "required": [
+                              "query",
+                              "color",
+                              "meaning"
+                            ]
+                          }
+                        },
+                        "page_index": {
+                          "type": "integer",
+                          "minimum": 0
+                        }
+                      },
+                      "required": [
+                        "map_view_id",
+                        "media_id",
+                        "room_ids",
+                        "object_ids",
+                        "bounds_xz",
+                        "world_to_pixel",
+                        "legend",
+                        "page_index"
+                      ]
+                    }
+                  },
+                  "unshown_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "uniqueItems": true
+                  },
+                  "record_count": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "policy_id": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "room_ids",
+                  "groups",
+                  "candidates",
+                  "maps",
+                  "unshown_ids",
+                  "record_count",
+                  "policy_id"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "media": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "media_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uri": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "mime_type": {
+                  "enum": [
+                    "image/png",
+                    "image/jpeg"
+                  ]
+                },
+                "width": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "height": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "source_kind": {
+                  "enum": [
+                    "topdown",
+                    "real_camera",
+                    "gs_render",
+                    "evidence_panel"
+                  ]
+                },
+                "object_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
+                },
+                "observation_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "media_id",
+                "uri",
+                "mime_type",
+                "width",
+                "height",
+                "source_kind",
+                "object_ids",
+                "observation_ids"
+              ]
+            }
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "message": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "affected_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "code",
+                "message",
+                "affected_ids"
+              ]
+            }
+          }
+        },
+        "required": [
+          "schema_version",
+          "tool",
+          "scene_id",
+          "snapshot_id",
+          "status",
+          "data",
+          "media",
+          "limitations",
+          "errors"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "enum": [
+                    "ok",
+                    "partial"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "room_ids": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "uniqueItems": true
+                    },
+                    "groups": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "query": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "label_match_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "uniqueItems": true
+                          },
+                          "visual_match_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "uniqueItems": true
+                          },
+                          "candidate_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "uniqueItems": true
+                          },
+                          "channels_used": {
+                            "type": "array",
+                            "items": {
+                              "enum": [
+                                "label",
+                                "visual"
+                              ]
+                            },
+                            "uniqueItems": true
+                          },
+                          "visual_top_k": {
+                            "type": "integer",
+                            "minimum": 0
+                          },
+                          "truncated": {
+                            "type": "boolean"
+                          },
+                          "encoded_query": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "query",
+                          "label_match_ids",
+                          "visual_match_ids",
+                          "candidate_ids",
+                          "channels_used",
+                          "visual_top_k",
+                          "truncated",
+                          "encoded_query"
+                        ]
+                      }
+                    },
+                    "candidates": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "object_id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "label": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "room_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "uniqueItems": true
+                          },
+                          "matched_queries": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "uniqueItems": true
+                          },
+                          "match_basis": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "uniqueItems": true
+                          },
+                          "scores": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "properties": {
+                                "query": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "label_rank": {
+                                  "anyOf": [
+                                    {
+                                      "type": "integer",
+                                      "minimum": 1
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "visual_cosine": {
+                                  "anyOf": [
+                                    {
+                                      "type": "number",
+                                      "minimum": -1,
+                                      "maximum": 1
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "fusion_score": {
+                                  "anyOf": [
+                                    {
+                                      "type": "number"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "query",
+                                "label_rank",
+                                "visual_cosine",
+                                "fusion_score"
+                              ]
+                            }
+                          }
+                        },
+                        "required": [
+                          "object_id",
+                          "label",
+                          "room_ids",
+                          "matched_queries",
+                          "match_basis",
+                          "scores"
+                        ]
+                      }
+                    },
+                    "maps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "map_view_id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "media_id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "room_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "uniqueItems": true
+                          },
+                          "object_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "uniqueItems": true
+                          },
+                          "bounds_xz": {
+                            "type": "array",
+                            "items": {
+                              "type": "number"
+                            },
+                            "minItems": 4,
+                            "maxItems": 4
+                          },
+                          "world_to_pixel": {
+                            "type": "array",
+                            "items": {
+                              "type": "array",
+                              "items": {
+                                "type": "number"
+                              },
+                              "minItems": 3,
+                              "maxItems": 3
+                            },
+                            "minItems": 3,
+                            "maxItems": 3
+                          },
+                          "legend": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "properties": {
+                                "query": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "color": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "meaning": {
+                                  "type": "string",
+                                  "minLength": 1
+                                }
+                              },
+                              "required": [
+                                "query",
+                                "color",
+                                "meaning"
+                              ]
+                            }
+                          },
+                          "page_index": {
+                            "type": "integer",
+                            "minimum": 0
+                          }
+                        },
+                        "required": [
+                          "map_view_id",
+                          "media_id",
+                          "room_ids",
+                          "object_ids",
+                          "bounds_xz",
+                          "world_to_pixel",
+                          "legend",
+                          "page_index"
+                        ]
+                      }
+                    },
+                    "unshown_ids": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "uniqueItems": true
+                    },
+                    "record_count": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "policy_id": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "room_ids",
+                    "groups",
+                    "candidates",
+                    "maps",
+                    "unshown_ids",
+                    "record_count",
+                    "policy_id"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "data": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "inspect_objects",
+      "description": "按ID查看物体图片与详情。",
+      "read_only": true,
+      "implementation_status": "local_implemented",
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1,
+            "maxItems": 8,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "ids"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema"
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "schema_version": {
+            "const": "1.0.0"
+          },
+          "tool": {
+            "const": "inspect_objects"
+          },
+          "scene_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "snapshot_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "partial",
+              "invalid_request",
+              "not_found",
+              "unavailable"
+            ]
+          },
+          "data": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "objects": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "object_id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "label": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "type_ids": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "uniqueItems": true
+                        },
+                        "room_ids": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "uniqueItems": true
+                        },
+                        "center_xyz": {
+                          "type": "array",
+                          "items": {
+                            "type": "number"
+                          },
+                          "minItems": 3,
+                          "maxItems": 3
+                        },
+                        "bbox": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "min": {
+                              "type": "array",
+                              "items": {
+                                "type": "number"
+                              },
+                              "minItems": 3,
+                              "maxItems": 3
+                            },
+                            "max": {
+                              "type": "array",
+                              "items": {
+                                "type": "number"
+                              },
+                              "minItems": 3,
+                              "maxItems": 3
+                            }
+                          },
+                          "required": [
+                            "min",
+                            "max"
+                          ]
+                        },
+                        "attributes": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                              "key": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "value": {},
+                              "source": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "verification": {
+                                "enum": [
+                                  "unverified",
+                                  "reviewed"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "key",
+                              "value",
+                              "source",
+                              "verification"
+                            ]
+                          }
+                        },
+                        "identity_status": {
+                          "enum": [
+                            "unresolved",
+                            "reviewed"
+                          ]
+                        },
+                        "entity_id": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "source_links": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                              "target_object_id": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "kind": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "source": {
+                                "type": "string",
+                                "minLength": 1
+                              }
+                            },
+                            "required": [
+                              "target_object_id",
+                              "kind",
+                              "source"
+                            ]
+                          }
+                        },
+                        "source_refs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "uniqueItems": true
+                        },
+                        "evidence": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                              "observation_id": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "media_id": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "source_kind": {
+                                "enum": [
+                                  "real_camera",
+                                  "gs_render"
+                                ]
+                              },
+                              "camera_position_xyz": {
+                                "anyOf": [
+                                  {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "number"
+                                    },
+                                    "minItems": 3,
+                                    "maxItems": 3
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "panels": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "kind": {
+                                      "enum": [
+                                        "full",
+                                        "crop"
+                                      ]
+                                    },
+                                    "panel_xyxy": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "integer",
+                                        "minimum": 0
+                                      },
+                                      "minItems": 4,
+                                      "maxItems": 4
+                                    },
+                                    "original_crop_xyxy": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "integer",
+                                        "minimum": 0
+                                      },
+                                      "minItems": 4,
+                                      "maxItems": 4
+                                    },
+                                    "original_size": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "integer",
+                                        "minimum": 1
+                                      },
+                                      "minItems": 2,
+                                      "maxItems": 2
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "panel_xyxy",
+                                    "original_crop_xyxy",
+                                    "original_size"
+                                  ]
+                                },
+                                "minItems": 1
+                              }
+                            },
+                            "required": [
+                              "observation_id",
+                              "media_id",
+                              "source_kind",
+                              "camera_position_xyz",
+                              "panels"
+                            ]
+                          }
+                        },
+                        "limitations": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "uniqueItems": true
+                        }
+                      },
+                      "required": [
+                        "object_id",
+                        "label",
+                        "type_ids",
+                        "room_ids",
+                        "center_xyz",
+                        "bbox",
+                        "attributes",
+                        "identity_status",
+                        "entity_id",
+                        "source_links",
+                        "source_refs",
+                        "evidence",
+                        "limitations"
+                      ]
+                    }
+                  },
+                  "missing_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "uniqueItems": true
+                  },
+                  "omitted_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "uniqueItems": true
+                  }
+                },
+                "required": [
+                  "objects",
+                  "missing_ids",
+                  "omitted_ids"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "media": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "media_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uri": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "mime_type": {
+                  "enum": [
+                    "image/png",
+                    "image/jpeg"
+                  ]
+                },
+                "width": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "height": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "source_kind": {
+                  "enum": [
+                    "topdown",
+                    "real_camera",
+                    "gs_render",
+                    "evidence_panel"
+                  ]
+                },
+                "object_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
+                },
+                "observation_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "media_id",
+                "uri",
+                "mime_type",
+                "width",
+                "height",
+                "source_kind",
+                "object_ids",
+                "observation_ids"
+              ]
+            }
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "message": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "affected_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "code",
+                "message",
+                "affected_ids"
+              ]
+            }
+          }
+        },
+        "required": [
+          "schema_version",
+          "tool",
+          "scene_id",
+          "snapshot_id",
+          "status",
+          "data",
+          "media",
+          "limitations",
+          "errors"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "enum": [
+                    "ok",
+                    "partial"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "objects": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "object_id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "label": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "type_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "uniqueItems": true
+                          },
+                          "room_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "uniqueItems": true
+                          },
+                          "center_xyz": {
+                            "type": "array",
+                            "items": {
+                              "type": "number"
+                            },
+                            "minItems": 3,
+                            "maxItems": 3
+                          },
+                          "bbox": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                              "min": {
+                                "type": "array",
+                                "items": {
+                                  "type": "number"
+                                },
+                                "minItems": 3,
+                                "maxItems": 3
+                              },
+                              "max": {
+                                "type": "array",
+                                "items": {
+                                  "type": "number"
+                                },
+                                "minItems": 3,
+                                "maxItems": 3
+                              }
+                            },
+                            "required": [
+                              "min",
+                              "max"
+                            ]
+                          },
+                          "attributes": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "properties": {
+                                "key": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "value": {},
+                                "source": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "verification": {
+                                  "enum": [
+                                    "unverified",
+                                    "reviewed"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "key",
+                                "value",
+                                "source",
+                                "verification"
+                              ]
+                            }
+                          },
+                          "identity_status": {
+                            "enum": [
+                              "unresolved",
+                              "reviewed"
+                            ]
+                          },
+                          "entity_id": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "source_links": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "properties": {
+                                "target_object_id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "kind": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "source": {
+                                  "type": "string",
+                                  "minLength": 1
+                                }
+                              },
+                              "required": [
+                                "target_object_id",
+                                "kind",
+                                "source"
+                              ]
+                            }
+                          },
+                          "source_refs": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "uniqueItems": true
+                          },
+                          "evidence": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "properties": {
+                                "observation_id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "media_id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "source_kind": {
+                                  "enum": [
+                                    "real_camera",
+                                    "gs_render"
+                                  ]
+                                },
+                                "camera_position_xyz": {
+                                  "anyOf": [
+                                    {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "number"
+                                      },
+                                      "minItems": 3,
+                                      "maxItems": 3
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "panels": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "kind": {
+                                        "enum": [
+                                          "full",
+                                          "crop"
+                                        ]
+                                      },
+                                      "panel_xyxy": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "integer",
+                                          "minimum": 0
+                                        },
+                                        "minItems": 4,
+                                        "maxItems": 4
+                                      },
+                                      "original_crop_xyxy": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "integer",
+                                          "minimum": 0
+                                        },
+                                        "minItems": 4,
+                                        "maxItems": 4
+                                      },
+                                      "original_size": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "integer",
+                                          "minimum": 1
+                                        },
+                                        "minItems": 2,
+                                        "maxItems": 2
+                                      }
+                                    },
+                                    "required": [
+                                      "kind",
+                                      "panel_xyxy",
+                                      "original_crop_xyxy",
+                                      "original_size"
+                                    ]
+                                  },
+                                  "minItems": 1
+                                }
+                              },
+                              "required": [
+                                "observation_id",
+                                "media_id",
+                                "source_kind",
+                                "camera_position_xyz",
+                                "panels"
+                              ]
+                            }
+                          },
+                          "limitations": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "uniqueItems": true
+                          }
+                        },
+                        "required": [
+                          "object_id",
+                          "label",
+                          "type_ids",
+                          "room_ids",
+                          "center_xyz",
+                          "bbox",
+                          "attributes",
+                          "identity_status",
+                          "entity_id",
+                          "source_links",
+                          "source_refs",
+                          "evidence",
+                          "limitations"
+                        ]
+                      }
+                    },
+                    "missing_ids": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "uniqueItems": true
+                    },
+                    "omitted_ids": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "uniqueItems": true
+                    }
+                  },
+                  "required": [
+                    "objects",
+                    "missing_ids",
+                    "omitted_ids"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "data": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "search_candidates",
+      "description": "按区域和描述检索候选物体。",
+      "read_only": true,
+      "implementation_status": "local_implemented",
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "room_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "maxItems": 16,
+            "uniqueItems": true
+          },
+          "queries": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "maxItems": 4,
+            "minItems": 1
+          }
+        },
+        "required": [
+          "queries"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema"
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "schema_version": {
+            "const": "1.0.0"
+          },
+          "tool": {
+            "const": "search_candidates"
+          },
+          "scene_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "snapshot_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "partial",
+              "invalid_request",
+              "not_found",
+              "unavailable"
+            ]
+          },
+          "data": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "room_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "uniqueItems": true
+                  },
+                  "groups": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "query": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "label_match_ids": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "uniqueItems": true
+                        },
+                        "visual_match_ids": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "uniqueItems": true
+                        },
+                        "candidate_ids": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "uniqueItems": true
+                        },
+                        "channels_used": {
+                          "type": "array",
+                          "items": {
+                            "enum": [
+                              "label",
+                              "visual"
+                            ]
+                          },
+                          "uniqueItems": true
+                        },
+                        "visual_top_k": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "truncated": {
+                          "type": "boolean"
+                        },
+                        "encoded_query": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "query",
+                        "label_match_ids",
+                        "visual_match_ids",
+                        "candidate_ids",
+                        "channels_used",
+                        "visual_top_k",
+                        "truncated",
+                        "encoded_query"
+                      ]
+                    }
+                  },
+                  "candidates": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "object_id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "label": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "room_ids": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "uniqueItems": true
+                        },
+                        "matched_queries": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "uniqueItems": true
+                        },
+                        "match_basis": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "uniqueItems": true
+                        },
+                        "scores": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                              "query": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "label_rank": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer",
+                                    "minimum": 1
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "visual_cosine": {
+                                "anyOf": [
+                                  {
+                                    "type": "number",
+                                    "minimum": -1,
+                                    "maximum": 1
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "fusion_score": {
+                                "anyOf": [
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "query",
+                              "label_rank",
+                              "visual_cosine",
+                              "fusion_score"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "object_id",
+                        "label",
+                        "room_ids",
+                        "matched_queries",
+                        "match_basis",
+                        "scores"
+                      ]
+                    }
+                  },
+                  "record_count": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "policy_id": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "room_ids",
+                  "groups",
+                  "candidates",
+                  "record_count",
+                  "policy_id"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "media": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "media_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uri": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "mime_type": {
+                  "enum": [
+                    "image/png",
+                    "image/jpeg"
+                  ]
+                },
+                "width": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "height": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "source_kind": {
+                  "enum": [
+                    "topdown",
+                    "real_camera",
+                    "gs_render",
+                    "evidence_panel"
+                  ]
+                },
+                "object_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
+                },
+                "observation_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "media_id",
+                "uri",
+                "mime_type",
+                "width",
+                "height",
+                "source_kind",
+                "object_ids",
+                "observation_ids"
+              ]
+            }
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "message": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "affected_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "code",
+                "message",
+                "affected_ids"
+              ]
+            }
+          }
+        },
+        "required": [
+          "schema_version",
+          "tool",
+          "scene_id",
+          "snapshot_id",
+          "status",
+          "data",
+          "media",
+          "limitations",
+          "errors"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "enum": [
+                    "ok",
+                    "partial"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "room_ids": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "uniqueItems": true
+                    },
+                    "groups": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "query": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "label_match_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "uniqueItems": true
+                          },
+                          "visual_match_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "uniqueItems": true
+                          },
+                          "candidate_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "uniqueItems": true
+                          },
+                          "channels_used": {
+                            "type": "array",
+                            "items": {
+                              "enum": [
+                                "label",
+                                "visual"
+                              ]
+                            },
+                            "uniqueItems": true
+                          },
+                          "visual_top_k": {
+                            "type": "integer",
+                            "minimum": 0
+                          },
+                          "truncated": {
+                            "type": "boolean"
+                          },
+                          "encoded_query": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "query",
+                          "label_match_ids",
+                          "visual_match_ids",
+                          "candidate_ids",
+                          "channels_used",
+                          "visual_top_k",
+                          "truncated",
+                          "encoded_query"
+                        ]
+                      }
+                    },
+                    "candidates": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "object_id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "label": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "room_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "uniqueItems": true
+                          },
+                          "matched_queries": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "uniqueItems": true
+                          },
+                          "match_basis": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "uniqueItems": true
+                          },
+                          "scores": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "properties": {
+                                "query": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "label_rank": {
+                                  "anyOf": [
+                                    {
+                                      "type": "integer",
+                                      "minimum": 1
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "visual_cosine": {
+                                  "anyOf": [
+                                    {
+                                      "type": "number",
+                                      "minimum": -1,
+                                      "maximum": 1
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "fusion_score": {
+                                  "anyOf": [
+                                    {
+                                      "type": "number"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "query",
+                                "label_rank",
+                                "visual_cosine",
+                                "fusion_score"
+                              ]
+                            }
+                          }
+                        },
+                        "required": [
+                          "object_id",
+                          "label",
+                          "room_ids",
+                          "matched_queries",
+                          "match_basis",
+                          "scores"
+                        ]
+                      }
+                    },
+                    "record_count": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "policy_id": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "room_ids",
+                    "groups",
+                    "candidates",
+                    "record_count",
+                    "policy_id"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "data": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "status": {
+      "enum": [
+        "resolved",
+        "ambiguous",
+        "insufficient_evidence",
+        "needs_context",
+        "cancelled"
+      ]
+    },
+    "object_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true,
+      "description": "仍符合用户条件的候选ID，不包含已排除对象。"
+    },
+    "evidence_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "question": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "excluded_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true,
+      "description": "已查看并排除的对象ID；object_ids只填写仍符合条件的候选。"
+    }
+  },
+  "required": [
+    "status",
+    "object_ids",
+    "evidence_ids",
+    "reason",
+    "question"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "resolved"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "object_ids": {
+            "minItems": 1,
+            "maxItems": 1
+          },
+          "evidence_ids": {
+            "minItems": 1
+          },
+          "question": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "ambiguous",
+              "needs_context"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "question": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "cancelled"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "object_ids": {
+            "maxItems": 0
+          }
+        }
+      }
+    }
+  ]
+}

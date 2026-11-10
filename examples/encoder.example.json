@@ -1,0 +1,9 @@
+{
+  "space_id": "clip-h14",
+  "encoder": "ViT-H-14",
+  "weights_fingerprint": "laion2b_s32b_b79k",
+  "preprocess_fingerprint": "source-context25-squarepad",
+  "checkpoint": "/path/to/verified/ViT-H-14.safetensors",
+  "checkpoint_sha256": "REPLACE_WITH_ACTUAL_VERIFIED_SHA256",
+  "device": "cpu"
+}

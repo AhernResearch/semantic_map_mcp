@@ -1,0 +1,708 @@
+{
+  "scene_id": "mfloor",
+  "snapshot_id": "mfloor-20261110-f99fa34a71bb",
+  "source_scene_sha256": "f5457efca2a409d4a6c7820cd36c2f33ba448a76882a1ecb4433be410e30c0f1",
+  "count_unit": "source_record",
+  "counts": {
+    "objects": 191,
+    "observations": 382,
+    "types": 61,
+    "regions": 5
+  },
+  "rooms": [
+    {
+      "room_id": "R00",
+      "name": "未归属区域",
+      "kind": "unassigned",
+      "object_count": 0
+    },
+    {
+      "room_id": "R01",
+      "name": "会议室",
+      "kind": "area",
+      "object_count": 46
+    },
+    {
+      "room_id": "R02",
+      "name": "走廊",
+      "kind": "area",
+      "object_count": 136
+    },
+    {
+      "room_id": "R03",
+      "name": "玻璃隔断区",
+      "kind": "area",
+      "object_count": 9
+    },
+    {
+      "room_id": "R04",
+      "name": "玻璃隔断区",
+      "kind": "area",
+      "object_count": 0
+    }
+  ],
+  "anchors": [
+    {
+      "object_id": "S003",
+      "label": "急救箱",
+      "room_ids": [
+        "R02"
+      ],
+      "center_xyz": [
+        -3.175,
+        -0.16500000000000004,
+        -11.49
+      ],
+      "observation_links": [
+        {
+          "observation_id": "obs-034-0",
+          "crop_xyxy": [
+            0,
+            0,
+            768,
+            768
+          ],
+          "target_support": "valid"
+        },
+        {
+          "observation_id": "obs-034-1",
+          "crop_xyxy": [
+            0,
+            0,
+            768,
+            768
+          ],
+          "target_support": "valid"
+        }
+      ],
+      "identity_status": "unresolved",
+      "source_links": []
+    },
+    {
+      "object_id": "S009",
+      "label": "监控摄像头",
+      "room_ids": [
+        "R02"
+      ],
+      "center_xyz": [
+        -4.0649999999999995,
+        0.475,
+        -33.635
+      ],
+      "observation_links": [
+        {
+          "observation_id": "obs-040-0",
+          "crop_xyxy": [
+            153,
+            151,
+            622,
+            620
+          ],
+          "target_support": "valid"
+        },
+        {
+          "observation_id": "obs-040-1",
+          "crop_xyxy": [
+            172,
+            165,
+            600,
+            593
+          ],
+          "target_support": "valid"
+        }
+      ],
+      "identity_status": "unresolved",
+      "source_links": []
+    },
+    {
+      "object_id": "S021",
+      "label": "柜子",
+      "room_ids": [
+        "R01"
+      ],
+      "center_xyz": [
+        -5.79,
+        -1.135,
+        -31.77
+      ],
+      "observation_links": [
+        {
+          "observation_id": "obs-052-0",
+          "crop_xyxy": [
+            27,
+            0,
+            768,
+            747
+          ],
+          "target_support": "valid"
+        },
+        {
+          "observation_id": "obs-052-1",
+          "crop_xyxy": [
+            0,
+            0,
+            768,
+            768
+          ],
+          "target_support": "valid"
+        }
+      ],
+      "identity_status": "unresolved",
+      "source_links": []
+    },
+    {
+      "object_id": "S023",
+      "label": "椅子",
+      "room_ids": [
+        "R01"
+      ],
+      "center_xyz": [
+        -7.08,
+        -0.55,
+        -32.855000000000004
+      ],
+      "observation_links": [
+        {
+          "observation_id": "obs-054-0",
+          "crop_xyxy": [
+            0,
+            32,
+            768,
+            768
+          ],
+          "target_support": "valid"
+        },
+        {
+          "observation_id": "obs-054-1",
+          "crop_xyxy": [
+            1,
+            52,
+            768,
+            768
+          ],
+          "target_support": "valid"
+        }
+      ],
+      "identity_status": "unresolved",
+      "source_links": []
+    },
+    {
+      "object_id": "S032",
+      "label": "桌子",
+      "room_ids": [
+        "R01"
+      ],
+      "center_xyz": [
+        -6.39,
+        -0.9299999999999999,
+        -33.504999999999995
+      ],
+      "observation_links": [
+        {
+          "observation_id": "obs-063-0",
+          "crop_xyxy": [
+            0,
+            0,
+            768,
+            768
+          ],
+          "target_support": "valid"
+        },
+        {
+          "observation_id": "obs-063-1",
+          "crop_xyxy": [
+            0,
+            37,
+            768,
+            768
+          ],
+          "target_support": "valid"
+        }
+      ],
+      "identity_status": "unresolved",
+      "source_links": []
+    },
+    {
+      "object_id": "S034",
+      "label": "椅子",
+      "room_ids": [
+        "R01"
+      ],
+      "center_xyz": [
+        -8.495000000000001,
+        -0.5,
+        -33.925
+      ],
+      "observation_links": [
+        {
+          "observation_id": "obs-065-0",
+          "crop_xyxy": [
+            111,
+            191,
+            575,
+            655
+          ],
+          "target_support": "valid"
+        },
+        {
+          "observation_id": "obs-065-1",
+          "crop_xyxy": [
+            119,
+            138,
+            742,
+            762
+          ],
+          "target_support": "valid"
+        }
+      ],
+      "identity_status": "unresolved",
+      "source_links": []
+    },
+    {
+      "object_id": "S035",
+      "label": "椅子",
+      "room_ids": [
+        "R01"
+      ],
+      "center_xyz": [
+        -7.77,
+        -0.505,
+        -33.975
+      ],
+      "observation_links": [
+        {
+          "observation_id": "obs-066-0",
+          "crop_xyxy": [
+            15,
+            0,
+            768,
+            760
+          ],
+          "target_support": "valid"
+        },
+        {
+          "observation_id": "obs-066-1",
+          "crop_xyxy": [
+            150,
+            160,
+            694,
+            703
+          ],
+          "target_support": "valid"
+        }
+      ],
+      "identity_status": "unresolved",
+      "source_links": []
+    },
+    {
+      "object_id": "S037",
+      "label": "柜子",
+      "room_ids": [
+        "R02"
+      ],
+      "center_xyz": [
+        -4.3149999999999995,
+        -0.98,
+        -34.125
+      ],
+      "observation_links": [
+        {
+          "observation_id": "obs-068-0",
+          "crop_xyxy": [
+            0,
+            30,
+            731,
+            768
+          ],
+          "target_support": "valid"
+        },
+        {
+          "observation_id": "obs-068-1",
+          "crop_xyxy": [
+            33,
+            29,
+            744,
+            739
+          ],
+          "target_support": "valid"
+        }
+      ],
+      "identity_status": "unresolved",
+      "source_links": []
+    },
+    {
+      "object_id": "S049",
+      "label": "纸箱",
+      "room_ids": [
+        "R01"
+      ],
+      "center_xyz": [
+        -5.5600000000000005,
+        -1.11,
+        -34.885000000000005
+      ],
+      "observation_links": [
+        {
+          "observation_id": "obs-080-0",
+          "crop_xyxy": [
+            4,
+            0,
+            768,
+            768
+          ],
+          "target_support": "valid"
+        },
+        {
+          "observation_id": "obs-080-1",
+          "crop_xyxy": [
+            0,
+            0,
+            768,
+            768
+          ],
+          "target_support": "valid"
+        }
+      ],
+      "identity_status": "unresolved",
+      "source_links": []
+    },
+    {
+      "object_id": "S108",
+      "label": "消防栓箱",
+      "room_ids": [
+        "R02"
+      ],
+      "center_xyz": [
+        -3.19,
+        -0.15500000000000003,
+        -11.530000000000001
+      ],
+      "observation_links": [
+        {
+          "observation_id": "obs-139-0",
+          "crop_xyxy": [
+            0,
+            0,
+            768,
+            768
+          ],
+          "target_support": "valid"
+        },
+        {
+          "observation_id": "obs-139-1",
+          "crop_xyxy": [
+            0,
+            0,
+            768,
+            768
+          ],
+          "target_support": "valid"
+        }
+      ],
+      "identity_status": "unresolved",
+      "source_links": []
+    },
+    {
+      "object_id": "S129",
+      "label": "设备",
+      "room_ids": [
+        "R02"
+      ],
+      "center_xyz": [
+        -3.06,
+        0.0,
+        -31.805
+      ],
+      "observation_links": [
+        {
+          "observation_id": "obs-160-0",
+          "crop_xyxy": [
+            125,
+            108,
+            657,
+            640
+          ],
+          "target_support": "valid"
+        },
+        {
+          "observation_id": "obs-160-1",
+          "crop_xyxy": [
+            198,
+            221,
+            528,
+            551
+          ],
+          "target_support": "invalid"
+        }
+      ],
+      "identity_status": "unresolved",
+      "source_links": []
+    },
+    {
+      "object_id": "S131",
+      "label": "设备",
+      "room_ids": [
+        "R01"
+      ],
+      "center_xyz": [
+        -8.215,
+        -0.5449999999999999,
+        -33.295
+      ],
+      "observation_links": [
+        {
+          "observation_id": "obs-162-0",
+          "crop_xyxy": [
+            98,
+            111,
+            681,
+            695
+          ],
+          "target_support": "valid"
+        },
+        {
+          "observation_id": "obs-162-1",
+          "crop_xyxy": [
+            88,
+            107,
+            660,
+            678
+          ],
+          "target_support": "valid"
+        }
+      ],
+      "identity_status": "unresolved",
+      "source_links": []
+    },
+    {
+      "object_id": "S132",
+      "label": "设备",
+      "room_ids": [
+        "R01"
+      ],
+      "center_xyz": [
+        -7.18,
+        -0.52,
+        -33.31
+      ],
+      "observation_links": [
+        {
+          "observation_id": "obs-163-0",
+          "crop_xyxy": [
+            161,
+            158,
+            639,
+            637
+          ],
+          "target_support": "valid"
+        },
+        {
+          "observation_id": "obs-163-1",
+          "crop_xyxy": [
+            137,
+            163,
+            602,
+            628
+          ],
+          "target_support": "valid"
+        }
+      ],
+      "identity_status": "unresolved",
+      "source_links": []
+    },
+    {
+      "object_id": "S135",
+      "label": "设备",
+      "room_ids": [
+        "R02"
+      ],
+      "center_xyz": [
+        -5.175,
+        -0.885,
+        -34.87
+      ],
+      "observation_links": [
+        {
+          "observation_id": "obs-166-0",
+          "crop_xyxy": [
+            22,
+            35,
+            758,
+            768
+          ],
+          "target_support": "valid"
+        },
+        {
+          "observation_id": "obs-166-1",
+          "crop_xyxy": [
+            0,
+            0,
+            753,
+            768
+          ],
+          "target_support": "valid"
+        }
+      ],
+      "identity_status": "unresolved",
+      "source_links": []
+    },
+    {
+      "object_id": "S152",
+      "label": "门",
+      "room_ids": [
+        "R01"
+      ],
+      "center_xyz": [
+        -6.975,
+        0.11499999999999999,
+        -29.744999999999997
+      ],
+      "observation_links": [
+        {
+          "observation_id": "obs-183-0",
+          "crop_xyxy": [
+            0,
+            0,
+            768,
+            768
+          ],
+          "target_support": "valid"
+        },
+        {
+          "observation_id": "obs-183-1",
+          "crop_xyxy": [
+            0,
+            0,
+            768,
+            768
+          ],
+          "target_support": "valid"
+        }
+      ],
+      "identity_status": "unresolved",
+      "source_links": []
+    },
+    {
+      "object_id": "S154",
+      "label": "门",
+      "room_ids": [
+        "R01"
+      ],
+      "center_xyz": [
+        -10.469999999999999,
+        0.16500000000000004,
+        -30.39
+      ],
+      "observation_links": [
+        {
+          "observation_id": "obs-185-0",
+          "crop_xyxy": [
+            0,
+            0,
+            768,
+            768
+          ],
+          "target_support": "valid"
+        },
+        {
+          "observation_id": "obs-185-1",
+          "crop_xyxy": [
+            0,
+            0,
+            768,
+            768
+          ],
+          "target_support": "valid"
+        }
+      ],
+      "identity_status": "unresolved",
+      "source_links": []
+    },
+    {
+      "object_id": "S155",
+      "label": "门",
+      "room_ids": [
+        "R01"
+      ],
+      "center_xyz": [
+        -6.145,
+        0.10000000000000009,
+        -31.450000000000003
+      ],
+      "observation_links": [
+        {
+          "observation_id": "obs-186-0",
+          "crop_xyxy": [
+            0,
+            0,
+            768,
+            768
+          ],
+          "target_support": "valid"
+        },
+        {
+          "observation_id": "obs-186-1",
+          "crop_xyxy": [
+            0,
+            0,
+            768,
+            768
+          ],
+          "target_support": "valid"
+        }
+      ],
+      "identity_status": "unresolved",
+      "source_links": []
+    },
+    {
+      "object_id": "indoor-060",
+      "label": "监控摄像头",
+      "room_ids": [
+        "R02"
+      ],
+      "center_xyz": [
+        -4.06275,
+        0.47850000000000004,
+        -33.64275000000001
+      ],
+      "observation_links": [
+        {
+          "observation_id": "obs-025-0",
+          "crop_xyxy": [
+            131,
+            128,
+            645,
+            641
+          ],
+          "target_support": "valid"
+        },
+        {
+          "observation_id": "obs-025-1",
+          "crop_xyxy": [
+            171,
+            163,
+            601,
+            593
+          ],
+          "target_support": "valid"
+        }
+      ],
+      "identity_status": "unresolved",
+      "source_links": []
+    }
+  ],
+  "capabilities": {
+    "record_lookup": true,
+    "object_images": true,
+    "object_vector_retrieval": true,
+    "verified_navigation_binding": "not_available_in_current_package",
+    "live_user_pose": false,
+    "live_robot_pose": false,
+    "path_provider": false
+  },
+  "limitations": [
+    "Source labels/regions are not independent ground truth",
+    "Observation timestamps do not establish current state",
+    "Capabilities beyond map data describe this isolated prototype, not every production system"
+  ]
+}

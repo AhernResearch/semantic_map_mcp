@@ -1,0 +1,935 @@
+{
+  "version": "0.1",
+  "status": "draft_unreviewed_not_executed",
+  "scene_id": "mfloor",
+  "snapshot_id": "mfloor-20261110-f99fa34a71bb",
+  "source_scene_sha256": "f5457efca2a409d4a6c7820cd36c2f33ba448a76882a1ecb4433be410e30c0f1",
+  "provenance_note": "User requirement fragments and derived design cases, not collected field trials. Source anchors are not answer labels.",
+  "cases": [
+    {
+      "case_id": "NG01",
+      "utterance": "去会议室的柜子那里",
+      "category": "category_region",
+      "origin": "derived_test",
+      "context": {},
+      "retrieval_plan": {
+        "queries": [
+          "柜子"
+        ],
+        "room_ids": [
+          "R01"
+        ]
+      },
+      "source_anchors": [
+        "S021",
+        "S037"
+      ],
+      "required_evidence": [
+        "区域身份与归属来源",
+        "多个柜子的图片和区别"
+      ],
+      "clarification": {
+        "trigger": "现有证据或语境不能唯一确定目标/所需参照",
+        "example_question": "你指的是哪一个柜子？",
+        "note": "仅在问题选项确实由候选和证据支持时使用；不固定强制追问"
+      },
+      "grounding_truth": {
+        "review_status": "unreviewed",
+        "allowed_referents": null,
+        "equivalence_groups": null,
+        "evidence_refs": null
+      },
+      "protocol_expectation": null,
+      "navigation_expectation": {
+        "goal": null,
+        "status": "not_attempted_or_blocked",
+        "reason": "本M-floor快照无已核验导航绑定；有指代结果也不得伪造站位"
+      },
+      "forbidden_conclusions": [
+        "类别top1就是目标"
+      ],
+      "evaluation_status": "not_run"
+    },
+    {
+      "case_id": "NG02",
+      "utterance": "去那个白色柜子那里",
+      "category": "appearance",
+      "origin": "user_requirement_adapted",
+      "context": {},
+      "retrieval_plan": {
+        "queries": [
+          "白色柜子",
+          "柜子"
+        ],
+        "room_ids": []
+      },
+      "source_anchors": [
+        "S021",
+        "S037"
+      ],
+      "required_evidence": [
+        "柜子候选图片",
+        "颜色可见性",
+        "语境或区域"
+      ],
+      "clarification": {
+        "trigger": "现有证据或语境不能唯一确定目标/所需参照",
+        "example_question": "你说的是哪个区域的白色柜子？",
+        "note": "仅在问题选项确实由候选和证据支持时使用；不固定强制追问"
+      },
+      "grounding_truth": {
+        "review_status": "unreviewed",
+        "allowed_referents": null,
+        "equivalence_groups": null,
+        "evidence_refs": null
+      },
+      "protocol_expectation": null,
+      "navigation_expectation": {
+        "goal": null,
+        "status": "not_attempted_or_blocked",
+        "reason": "本M-floor快照无已核验导航绑定；有指代结果也不得伪造站位"
+      },
+      "forbidden_conclusions": [
+        "向量高分证明白色"
+      ],
+      "evaluation_status": "not_run"
+    },
+    {
+      "case_id": "NG03",
+      "utterance": "去那个像打印机的设备那里",
+      "category": "appearance",
+      "origin": "user_requirement_adapted",
+      "context": {},
+      "retrieval_plan": {
+        "queries": [
+          "像打印机的设备"
+        ],
+        "room_ids": []
+      },
+      "source_anchors": [
+        "S129",
+        "S131",
+        "S132",
+        "S135"
+      ],
+      "required_evidence": [
+        "开放描述召回",
+        "对象全图和裁剪",
+        "同类外观比较"
+      ],
+      "clarification": {
+        "trigger": "现有证据或语境不能唯一确定目标/所需参照",
+        "example_question": "它在哪个区域，或者旁边有什么？",
+        "note": "仅在问题选项确实由候选和证据支持时使用；不固定强制追问"
+      },
+      "grounding_truth": {
+        "review_status": "unreviewed",
+        "allowed_referents": null,
+        "equivalence_groups": null,
+        "evidence_refs": null
+      },
+      "protocol_expectation": null,
+      "navigation_expectation": {
+        "goal": null,
+        "status": "not_attempted_or_blocked",
+        "reason": "本M-floor快照无已核验导航绑定；有指代结果也不得伪造站位"
+      },
+      "forbidden_conclusions": [
+        "未登记打印机所以不存在",
+        "像打印机所以可打印"
+      ],
+      "evaluation_status": "not_run"
+    },
+    {
+      "case_id": "NG04",
+      "utterance": "找个能打印文件的地方",
+      "category": "function",
+      "origin": "derived_test",
+      "context": {},
+      "retrieval_plan": {
+        "queries": [
+          "printer",
+          "打印机"
+        ],
+        "room_ids": []
+      },
+      "source_anchors": [],
+      "required_evidence": [
+        "设备功能依据",
+        "地点/对象范围",
+        "可用状态若请求涉及现在"
+      ],
+      "clarification": {
+        "trigger": "现有证据或语境不能唯一确定目标/所需参照",
+        "example_question": "你有指定的打印设备或区域吗？",
+        "note": "仅在问题选项确实由候选和证据支持时使用；不固定强制追问"
+      },
+      "grounding_truth": {
+        "review_status": "unreviewed",
+        "allowed_referents": null,
+        "equivalence_groups": null,
+        "evidence_refs": null
+      },
+      "protocol_expectation": null,
+      "navigation_expectation": {
+        "goal": null,
+        "status": "not_attempted_or_blocked",
+        "reason": "本M-floor快照无已核验导航绑定；有指代结果也不得伪造站位"
+      },
+      "forbidden_conclusions": [
+        "外观相似证明功能可用"
+      ],
+      "evaluation_status": "not_run"
+    },
+    {
+      "case_id": "NG05",
+      "utterance": "去门旁边那张桌子",
+      "category": "reference_relation",
+      "origin": "user_requirement_adapted",
+      "context": {},
+      "retrieval_plan": {
+        "queries": [
+          "桌子",
+          "门"
+        ],
+        "room_ids": []
+      },
+      "source_anchors": [
+        "S032",
+        "S152",
+        "S154",
+        "S155"
+      ],
+      "required_evidence": [
+        "门的身份",
+        "桌子候选",
+        "几何距离定义",
+        "隔墙或局部环境证据"
+      ],
+      "clarification": {
+        "trigger": "现有证据或语境不能唯一确定目标/所需参照",
+        "example_question": "你指的是哪扇门？",
+        "note": "仅在问题选项确实由候选和证据支持时使用；不固定强制追问"
+      },
+      "grounding_truth": {
+        "review_status": "unreviewed",
+        "allowed_referents": null,
+        "equivalence_groups": null,
+        "evidence_refs": null
+      },
+      "protocol_expectation": null,
+      "navigation_expectation": {
+        "goal": null,
+        "status": "not_attempted_or_blocked",
+        "reason": "本M-floor快照无已核验导航绑定；有指代结果也不得伪造站位"
+      },
+      "forbidden_conclusions": [
+        "任意门作为默认参照",
+        "中心最近必然门旁边"
+      ],
+      "evaluation_status": "not_run"
+    },
+    {
+      "case_id": "NG06",
+      "utterance": "去靠墙的柜子那里",
+      "category": "wall_relation",
+      "origin": "user_requirement_adapted",
+      "context": {},
+      "retrieval_plan": {
+        "queries": [
+          "柜子"
+        ],
+        "room_ids": []
+      },
+      "source_anchors": [
+        "S021",
+        "S037"
+      ],
+      "required_evidence": [
+        "柜子几何",
+        "真实墙体或清晰环境图"
+      ],
+      "clarification": {
+        "trigger": "现有证据或语境不能唯一确定目标/所需参照",
+        "example_question": "你能补充柜子的位置或外观吗？",
+        "note": "仅在问题选项确实由候选和证据支持时使用；不固定强制追问"
+      },
+      "grounding_truth": {
+        "review_status": "unreviewed",
+        "allowed_referents": null,
+        "equivalence_groups": null,
+        "evidence_refs": null
+      },
+      "protocol_expectation": null,
+      "navigation_expectation": {
+        "goal": null,
+        "status": "not_attempted_or_blocked",
+        "reason": "本M-floor快照无已核验导航绑定；有指代结果也不得伪造站位"
+      },
+      "forbidden_conclusions": [
+        "区域包围矩形就是墙"
+      ],
+      "evaluation_status": "not_run"
+    },
+    {
+      "case_id": "NG07",
+      "utterance": "去桌子下面那个箱子旁边",
+      "category": "vertical_relation",
+      "origin": "user_requirement_adapted",
+      "context": {},
+      "retrieval_plan": {
+        "queries": [
+          "桌子",
+          "纸箱"
+        ],
+        "room_ids": []
+      },
+      "source_anchors": [
+        "S049",
+        "S032"
+      ],
+      "required_evidence": [
+        "桌子和箱子身份",
+        "侧面/斜视图",
+        "高度与投影范围"
+      ],
+      "clarification": {
+        "trigger": "现有证据或语境不能唯一确定目标/所需参照",
+        "example_question": "你指的是哪张桌子？",
+        "note": "仅在问题选项确实由候选和证据支持时使用；不固定强制追问"
+      },
+      "grounding_truth": {
+        "review_status": "unreviewed",
+        "allowed_referents": null,
+        "equivalence_groups": null,
+        "evidence_refs": null
+      },
+      "protocol_expectation": null,
+      "navigation_expectation": {
+        "goal": null,
+        "status": "not_attempted_or_blocked",
+        "reason": "本M-floor快照无已核验导航绑定；有指代结果也不得伪造站位"
+      },
+      "forbidden_conclusions": [
+        "topdown重叠证明在下面",
+        "目标站位设在桌子内部"
+      ],
+      "evaluation_status": "not_run"
+    },
+    {
+      "case_id": "NG08",
+      "utterance": "去我左前方那个柜子",
+      "category": "egocentric_direction",
+      "origin": "user_requirement_adapted",
+      "context": {
+        "user_pose": null,
+        "robot_pose": null
+      },
+      "retrieval_plan": {
+        "queries": [
+          "柜子"
+        ],
+        "room_ids": []
+      },
+      "source_anchors": [
+        "S021",
+        "S037"
+      ],
+      "required_evidence": [
+        "用户位置和朝向",
+        "时间与坐标系",
+        "目标候选"
+      ],
+      "clarification": {
+        "trigger": "现有证据或语境不能唯一确定目标/所需参照",
+        "example_question": "请说明你的位置和面朝方向，或指出参照物。",
+        "note": "仅在问题选项确实由候选和证据支持时使用；不固定强制追问"
+      },
+      "grounding_truth": {
+        "review_status": "unreviewed",
+        "allowed_referents": null,
+        "equivalence_groups": null,
+        "evidence_refs": null
+      },
+      "protocol_expectation": {
+        "required_behavior": "request_reference_context",
+        "goal_must_be_null": true
+      },
+      "navigation_expectation": {
+        "goal": null,
+        "status": "not_attempted_or_blocked",
+        "reason": "本M-floor快照无已核验导航绑定；有指代结果也不得伪造站位"
+      },
+      "forbidden_conclusions": [
+        "默认我就是机器人",
+        "地图左上等于用户左前"
+      ],
+      "evaluation_status": "not_run"
+    },
+    {
+      "case_id": "NG09",
+      "utterance": "去离我最近的柜子",
+      "category": "route_distance",
+      "origin": "derived_test",
+      "context": {
+        "user_pose": null,
+        "robot_pose": null,
+        "path_provider": "unconfigured"
+      },
+      "retrieval_plan": {
+        "queries": [
+          "柜子"
+        ],
+        "room_ids": []
+      },
+      "source_anchors": [
+        "S021",
+        "S037"
+      ],
+      "required_evidence": [
+        "我指谁",
+        "有效起点位姿",
+        "绑定导航站位",
+        "路径距离及完整性"
+      ],
+      "clarification": {
+        "trigger": "现有证据或语境不能唯一确定目标/所需参照",
+        "example_question": "你指的是离你最近，还是离机器人最近？",
+        "note": "仅在问题选项确实由候选和证据支持时使用；不固定强制追问"
+      },
+      "grounding_truth": {
+        "review_status": "unreviewed",
+        "allowed_referents": null,
+        "equivalence_groups": null,
+        "evidence_refs": null
+      },
+      "protocol_expectation": {
+        "required_behavior": "do_not_rank_by_unavailable_path_distance",
+        "goal_must_be_null": true
+      },
+      "navigation_expectation": {
+        "goal": null,
+        "status": "not_attempted_or_blocked",
+        "reason": "本M-floor快照无已核验导航绑定；有指代结果也不得伪造站位"
+      },
+      "forbidden_conclusions": [
+        "欧氏距离冒充最短路线"
+      ],
+      "evaluation_status": "not_run"
+    },
+    {
+      "case_id": "NG10",
+      "utterance": "去会议室",
+      "category": "region_goal",
+      "origin": "derived_test",
+      "context": {
+        "referent_kind": "region"
+      },
+      "retrieval_plan": {
+        "queries": [],
+        "room_ids": [
+          "R01"
+        ]
+      },
+      "source_anchors": [],
+      "required_evidence": [
+        "区域身份",
+        "入口或房间导航站位绑定"
+      ],
+      "clarification": {
+        "trigger": "现有证据或语境不能唯一确定目标/所需参照",
+        "example_question": "若有多个会议室，应确认具体哪一个。",
+        "note": "仅在问题选项确实由候选和证据支持时使用；不固定强制追问"
+      },
+      "grounding_truth": {
+        "review_status": "unreviewed",
+        "allowed_referents": null,
+        "equivalence_groups": null,
+        "evidence_refs": null
+      },
+      "protocol_expectation": null,
+      "navigation_expectation": {
+        "goal": null,
+        "status": "not_attempted_or_blocked",
+        "reason": "本M-floor快照无已核验导航绑定；有指代结果也不得伪造站位"
+      },
+      "forbidden_conclusions": [
+        "随便选择房间内桌子中心作为终点"
+      ],
+      "evaluation_status": "not_run"
+    },
+    {
+      "case_id": "NG11",
+      "utterance": "去玻璃隔断区",
+      "category": "region_ambiguity",
+      "origin": "derived_test",
+      "context": {
+        "source_name_matches": [
+          "R03",
+          "R04"
+        ]
+      },
+      "retrieval_plan": {
+        "queries": [],
+        "room_ids": [
+          "R03",
+          "R04"
+        ]
+      },
+      "source_anchors": [],
+      "required_evidence": [
+        "同名区域区分",
+        "可靠位置描述"
+      ],
+      "clarification": {
+        "trigger": "现有证据或语境不能唯一确定目标/所需参照",
+        "example_question": "你指的是哪一处玻璃隔断区？",
+        "note": "仅在问题选项确实由候选和证据支持时使用；不固定强制追问"
+      },
+      "grounding_truth": {
+        "review_status": "unreviewed",
+        "allowed_referents": null,
+        "equivalence_groups": null,
+        "evidence_refs": null
+      },
+      "protocol_expectation": {
+        "required_behavior": "keep_both_regions_until_disambiguated",
+        "goal_must_be_null": true
+      },
+      "navigation_expectation": {
+        "goal": null,
+        "status": "not_attempted_or_blocked",
+        "reason": "本M-floor快照无已核验导航绑定；有指代结果也不得伪造站位"
+      },
+      "forbidden_conclusions": [
+        "R04无记录所以区域不存在"
+      ],
+      "evaluation_status": "not_run"
+    },
+    {
+      "case_id": "NG12",
+      "utterance": "去 S032 那张桌子那里",
+      "category": "explicit_id",
+      "origin": "discussion_example",
+      "context": {},
+      "retrieval_plan": {
+        "queries": [],
+        "room_ids": []
+      },
+      "source_anchors": [
+        "S032"
+      ],
+      "required_evidence": [
+        "有效ID及版本",
+        "导航目标绑定"
+      ],
+      "clarification": {
+        "trigger": "现有证据或语境不能唯一确定目标/所需参照",
+        "example_question": null,
+        "note": "仅在问题选项确实由候选和证据支持时使用；不固定强制追问"
+      },
+      "grounding_truth": {
+        "review_status": "unreviewed",
+        "allowed_referents": null,
+        "equivalence_groups": null,
+        "evidence_refs": null
+      },
+      "protocol_expectation": {
+        "expected_grounding_status": "resolved",
+        "expected_record_ids": [
+          "S032"
+        ],
+        "navigation_status": "blocked",
+        "goal_must_be_null": true
+      },
+      "navigation_expectation": {
+        "goal": null,
+        "status": "not_attempted_or_blocked",
+        "reason": "本M-floor快照无已核验导航绑定；有指代结果也不得伪造站位"
+      },
+      "forbidden_conclusions": [
+        "S032中心就是导航站位"
+      ],
+      "evaluation_status": "not_run"
+    },
+    {
+      "case_id": "NG13",
+      "utterance": "就第二个吧",
+      "category": "conversation_reference",
+      "origin": "derived_test",
+      "context": {
+        "presented_candidate_ids": [
+          "S034",
+          "S035"
+        ],
+        "presented_snapshot_id": "mfloor-20261110-f99fa34a71bb"
+      },
+      "retrieval_plan": {
+        "queries": [],
+        "room_ids": []
+      },
+      "source_anchors": [
+        "S034",
+        "S035"
+      ],
+      "required_evidence": [
+        "此前呈现的有序候选",
+        "当前会话版本"
+      ],
+      "clarification": {
+        "trigger": "现有证据或语境不能唯一确定目标/所需参照",
+        "example_question": null,
+        "note": "仅在问题选项确实由候选和证据支持时使用；不固定强制追问"
+      },
+      "grounding_truth": {
+        "review_status": "unreviewed",
+        "allowed_referents": null,
+        "equivalence_groups": null,
+        "evidence_refs": null
+      },
+      "protocol_expectation": {
+        "expected_record_ids": [
+          "S035"
+        ],
+        "goal_must_be_null": true
+      },
+      "navigation_expectation": {
+        "goal": null,
+        "status": "not_attempted_or_blocked",
+        "reason": "本M-floor快照无已核验导航绑定；有指代结果也不得伪造站位"
+      },
+      "forbidden_conclusions": [
+        "用新排名解释第二个"
+      ],
+      "evaluation_status": "not_run"
+    },
+    {
+      "case_id": "NG14",
+      "utterance": "不是那个，去另一个",
+      "category": "conversation_revision",
+      "origin": "derived_test",
+      "context": {
+        "previous_selected_id": "S034",
+        "presented_candidate_ids": [
+          "S023",
+          "S034",
+          "S035"
+        ]
+      },
+      "retrieval_plan": {
+        "queries": [],
+        "room_ids": []
+      },
+      "source_anchors": [
+        "S023",
+        "S034",
+        "S035"
+      ],
+      "required_evidence": [
+        "先前选择",
+        "先前候选集合"
+      ],
+      "clarification": {
+        "trigger": "现有证据或语境不能唯一确定目标/所需参照",
+        "example_question": "你指的是剩下候选中的哪一个？",
+        "note": "仅在问题选项确实由候选和证据支持时使用；不固定强制追问"
+      },
+      "grounding_truth": {
+        "review_status": "unreviewed",
+        "allowed_referents": null,
+        "equivalence_groups": null,
+        "evidence_refs": null
+      },
+      "protocol_expectation": {
+        "excluded_record_ids": [
+          "S034"
+        ],
+        "remaining_record_ids": [
+          "S023",
+          "S035"
+        ],
+        "goal_must_be_null": true
+      },
+      "navigation_expectation": {
+        "goal": null,
+        "status": "not_attempted_or_blocked",
+        "reason": "本M-floor快照无已核验导航绑定；有指代结果也不得伪造站位"
+      },
+      "forbidden_conclusions": [
+        "另一个必然只剩一个"
+      ],
+      "evaluation_status": "not_run"
+    },
+    {
+      "case_id": "NG15",
+      "utterance": "算了，不去了",
+      "category": "cancel",
+      "origin": "derived_test",
+      "context": {
+        "pending_candidate_id": "S032"
+      },
+      "retrieval_plan": {
+        "queries": [],
+        "room_ids": []
+      },
+      "source_anchors": [],
+      "required_evidence": [
+        "当前会话"
+      ],
+      "clarification": {
+        "trigger": "现有证据或语境不能唯一确定目标/所需参照",
+        "example_question": null,
+        "note": "仅在问题选项确实由候选和证据支持时使用；不固定强制追问"
+      },
+      "grounding_truth": {
+        "review_status": "unreviewed",
+        "allowed_referents": null,
+        "equivalence_groups": null,
+        "evidence_refs": null
+      },
+      "protocol_expectation": {
+        "expected_status": "cancelled",
+        "goal_must_be_null": true
+      },
+      "navigation_expectation": {
+        "goal": null,
+        "status": "not_attempted_or_blocked",
+        "reason": "本M-floor快照无已核验导航绑定；有指代结果也不得伪造站位"
+      },
+      "forbidden_conclusions": [
+        "继续交付先前目标"
+      ],
+      "evaluation_status": "not_run"
+    },
+    {
+      "case_id": "NG16",
+      "utterance": "去那个急救箱",
+      "category": "conflicting_label",
+      "origin": "derived_test",
+      "context": {},
+      "retrieval_plan": {
+        "queries": [
+          "急救箱",
+          "first aid cabinet"
+        ],
+        "room_ids": []
+      },
+      "source_anchors": [
+        "S003",
+        "S108"
+      ],
+      "required_evidence": [
+        "源标签与图片是否一致",
+        "消防设施混淆",
+        "物理身份核验"
+      ],
+      "clarification": {
+        "trigger": "现有证据或语境不能唯一确定目标/所需参照",
+        "example_question": "请确认你指的设备，或者补充所在位置。",
+        "note": "仅在问题选项确实由候选和证据支持时使用；不固定强制追问"
+      },
+      "grounding_truth": {
+        "review_status": "unreviewed",
+        "allowed_referents": null,
+        "equivalence_groups": null,
+        "evidence_refs": null
+      },
+      "protocol_expectation": null,
+      "navigation_expectation": {
+        "goal": null,
+        "status": "not_attempted_or_blocked",
+        "reason": "本M-floor快照无已核验导航绑定；有指代结果也不得伪造站位"
+      },
+      "forbidden_conclusions": [
+        "标签急救箱即现场急救箱",
+        "接近的两条记录必然同一件物体"
+      ],
+      "evaluation_status": "not_run"
+    },
+    {
+      "case_id": "NG17",
+      "utterance": "去会议室里现在空着的椅子旁边",
+      "category": "dynamic_state",
+      "origin": "derived_test",
+      "context": {
+        "live_observation": null,
+        "available_images": "static_gs_renders"
+      },
+      "retrieval_plan": {
+        "queries": [
+          "椅子"
+        ],
+        "room_ids": [
+          "R01"
+        ]
+      },
+      "source_anchors": [
+        "S023",
+        "S034",
+        "S035"
+      ],
+      "required_evidence": [
+        "新鲜图像与时间",
+        "无人/无物占用证据",
+        "站位绑定"
+      ],
+      "clarification": {
+        "trigger": "现有证据或语境不能唯一确定目标/所需参照",
+        "example_question": "现有地图无法确认当前占用状态，能提供现场信息吗？",
+        "note": "仅在问题选项确实由候选和证据支持时使用；不固定强制追问"
+      },
+      "grounding_truth": {
+        "review_status": "unreviewed",
+        "allowed_referents": null,
+        "equivalence_groups": null,
+        "evidence_refs": null
+      },
+      "protocol_expectation": {
+        "required_behavior": "do_not_assert_current_occupancy",
+        "goal_must_be_null": true
+      },
+      "navigation_expectation": {
+        "goal": null,
+        "status": "not_attempted_or_blocked",
+        "reason": "本M-floor快照无已核验导航绑定；有指代结果也不得伪造站位"
+      },
+      "forbidden_conclusions": [
+        "渲染生成时间就是实际观察时间"
+      ],
+      "evaluation_status": "not_run"
+    },
+    {
+      "case_id": "NG18",
+      "utterance": "去没有贴标签的那个打印设备",
+      "category": "unregistered",
+      "origin": "derived_test",
+      "context": {},
+      "retrieval_plan": {
+        "queries": [
+          "printer"
+        ],
+        "room_ids": []
+      },
+      "source_anchors": [],
+      "required_evidence": [
+        "已有对象召回",
+        "环境全图",
+        "未知目标定位能力"
+      ],
+      "clarification": {
+        "trigger": "现有证据或语境不能唯一确定目标/所需参照",
+        "example_question": "你能补充它的位置或附近的参照物吗？",
+        "note": "仅在问题选项确实由候选和证据支持时使用；不固定强制追问"
+      },
+      "grounding_truth": {
+        "review_status": "unreviewed",
+        "allowed_referents": null,
+        "equivalence_groups": null,
+        "evidence_refs": null
+      },
+      "protocol_expectation": null,
+      "navigation_expectation": {
+        "goal": null,
+        "status": "not_attempted_or_blocked",
+        "reason": "本M-floor快照无已核验导航绑定；有指代结果也不得伪造站位"
+      },
+      "forbidden_conclusions": [
+        "完全漏建对象也能由对象索引找出",
+        "从图片猜测一个三维ID"
+      ],
+      "evaluation_status": "not_run"
+    },
+    {
+      "case_id": "NG19",
+      "utterance": "确认，就去那里",
+      "category": "confirmation_gate",
+      "origin": "derived_test",
+      "context": {
+        "pending_referent": "S032",
+        "binding_verified": false
+      },
+      "retrieval_plan": {
+        "queries": [],
+        "room_ids": []
+      },
+      "source_anchors": [
+        "S032"
+      ],
+      "required_evidence": [
+        "待确认对象",
+        "同会话确认状态",
+        "有效导航绑定"
+      ],
+      "clarification": {
+        "trigger": "现有证据或语境不能唯一确定目标/所需参照",
+        "example_question": null,
+        "note": "仅在问题选项确实由候选和证据支持时使用；不固定强制追问"
+      },
+      "grounding_truth": {
+        "review_status": "unreviewed",
+        "allowed_referents": null,
+        "equivalence_groups": null,
+        "evidence_refs": null
+      },
+      "protocol_expectation": {
+        "navigation_status": "blocked",
+        "goal_must_be_null": true
+      },
+      "navigation_expectation": {
+        "goal": null,
+        "status": "not_attempted_or_blocked",
+        "reason": "本M-floor快照无已核验导航绑定；有指代结果也不得伪造站位"
+      },
+      "forbidden_conclusions": [
+        "用户确认能够替代缺失配准/站位"
+      ],
+      "evaluation_status": "not_run"
+    },
+    {
+      "case_id": "NG20",
+      "utterance": "去那两个摄像头旁边",
+      "category": "duplicate_identity",
+      "origin": "derived_test",
+      "context": {},
+      "retrieval_plan": {
+        "queries": [
+          "监控摄像头"
+        ],
+        "room_ids": [
+          "R02"
+        ]
+      },
+      "source_anchors": [
+        "indoor-060",
+        "S009"
+      ],
+      "required_evidence": [
+        "记录是否指同物",
+        "用户两目标含义",
+        "多目标导航策略"
+      ],
+      "clarification": {
+        "trigger": "现有证据或语境不能唯一确定目标/所需参照",
+        "example_question": "你指哪两台？这两条记录可能指向同一位置，需要核实。",
+        "note": "仅在问题选项确实由候选和证据支持时使用；不固定强制追问"
+      },
+      "grounding_truth": {
+        "review_status": "unreviewed",
+        "allowed_referents": null,
+        "equivalence_groups": null,
+        "evidence_refs": null
+      },
+      "protocol_expectation": null,
+      "navigation_expectation": {
+        "goal": null,
+        "status": "not_attempted_or_blocked",
+        "reason": "本M-floor快照无已核验导航绑定；有指代结果也不得伪造站位"
+      },
+      "forbidden_conclusions": [
+        "两个ID必然两台设备",
+        "擅自合并或选一个完成双目标请求"
+      ],
+      "evaluation_status": "not_run"
+    }
+  ]
+}
