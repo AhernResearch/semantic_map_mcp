@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "scene_id",
+    "snapshot_id",
+    "scene_sha256",
+    "model",
+    "endpoint",
+    "generation",
+    "complete",
+    "records"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "scene_id": {
+      "type": "string"
+    },
+    "snapshot_id": {
+      "type": "string"
+    },
+    "scene_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "model": {
+      "type": "string",
+      "minLength": 1
+    },
+    "endpoint": {
+      "type": "string"
+    },
+    "generation": {
+      "type": "object"
+    },
+    "complete": {
+      "type": "boolean"
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "object_id",
+          "description_id",
+          "status",
+          "text",
+          "sources",
+          "provenance",
+          "error"
+        ],
+        "properties": {
+          "object_id": {
+            "type": "string"
+          },
+          "description_id": {
+            "type": "string",
+            "pattern": "^desc-[a-f0-9]{64}$"
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "unclear",
+              "unavailable",
+              "error"
+            ]
+          },
+          "text": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 1000
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "observation_id",
+                "image_asset_id",
+                "image_sha256",
+                "crop_xyxy",
+                "target_support",
+                "source_kind",
+                "source_refs"
+              ]
+            }
+          },
+          "provenance": {
+            "type": "object"
+          },
+          "error": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

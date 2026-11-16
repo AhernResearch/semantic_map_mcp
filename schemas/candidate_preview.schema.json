@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Agent candidate image preview (raw audit sidecar)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "media_id",
+    "cells",
+    "missing_ids",
+    "media"
+  ],
+  "properties": {
+    "media_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "missing_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "cells": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "object_id",
+          "observation_id",
+          "source_kind",
+          "source_media_id",
+          "target_support",
+          "cell_xyxy",
+          "panels",
+          "next_view"
+        ],
+        "properties": {
+          "object_id": {
+            "type": "string"
+          },
+          "observation_id": {
+            "type": "string"
+          },
+          "source_kind": {
+            "enum": [
+              "real_camera",
+              "gs_render"
+            ]
+          },
+          "source_media_id": {
+            "type": "string"
+          },
+          "target_support": {
+            "enum": [
+              "valid",
+              "invalid",
+              "unknown"
+            ]
+          },
+          "cell_xyxy": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 4,
+            "maxItems": 4
+          },
+          "next_view": {
+            "enum": [
+              2,
+              null
+            ]
+          },
+          "panels": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "panel_xyxy",
+                "original_crop_xyxy",
+                "original_size"
+              ],
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "full",
+                    "crop"
+                  ]
+                },
+                "panel_xyxy": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 4,
+                  "maxItems": 4
+                },
+                "original_crop_xyxy": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 4,
+                  "maxItems": 4
+                },
+                "original_size": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              }
+            }
+          },
+          "media_id": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "media": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": [
+          "media_id",
+          "uri",
+          "mime_type",
+          "width",
+          "height",
+          "source_kind",
+          "object_ids",
+          "observation_ids"
+        ]
+      }
+    }
+  }
+}

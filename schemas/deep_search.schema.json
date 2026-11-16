@@ -1,0 +1,477 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "deep_search",
+  "description": "将地图查找任务交给地图子Agent，直接传用户原始指令，可带必要前文context；返回可展示答案、区域或物体定位、澄清问题与证据。通常优先用此工具完成地图任务。 think_mode选择fast（本地9B，默认）、middle（Sonnet）或strong（GPT-6 Sol）；不自动升级或降档。",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "instruction": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4096,
+        "pattern": "\\S"
+      },
+      "context": {
+        "type": "string",
+        "maxLength": 8192,
+        "default": ""
+      },
+      "think_mode": {
+        "enum": [
+          "fast",
+          "middle",
+          "strong"
+        ],
+        "default": "fast",
+        "description": "选择子Agent模型：fast本地9B，middle Sonnet，strong GPT-6 Sol。"
+      }
+    },
+    "required": [
+      "instruction"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "schema_version": {
+        "const": "1.0.0"
+      },
+      "tool": {
+        "const": "deep_search"
+      },
+      "scene_id": {
+        "type": "string"
+      },
+      "snapshot_id": {
+        "type": "string"
+      },
+      "status": {
+        "enum": [
+          "ok",
+          "invalid_request",
+          "unavailable"
+        ]
+      },
+      "trace_id": {
+        "type": "string"
+      },
+      "metrics": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "seconds": {
+            "type": "number",
+            "minimum": 0
+          },
+          "model_calls": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "tool_calls": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "model_seconds": {
+            "type": "number",
+            "minimum": 0
+          },
+          "tool_seconds": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "seconds",
+          "model_calls",
+          "tool_calls",
+          "model_seconds",
+          "tool_seconds"
+        ]
+      },
+      "data": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/result"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "media": {
+        "type": "array",
+        "maxItems": 0
+      },
+      "errors": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "affected_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "code",
+            "message",
+            "affected_ids"
+          ]
+        }
+      },
+      "limitations": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "execution": {
+        "anyOf": [
+          {
+            "type": "null"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "think_mode": {
+                "enum": [
+                  "fast",
+                  "middle",
+                  "strong"
+                ]
+              },
+              "model": {
+                "type": "string"
+              },
+              "api_format": {
+                "enum": [
+                  "chat_completions",
+                  "responses"
+                ]
+              }
+            },
+            "required": [
+              "think_mode",
+              "model",
+              "api_format"
+            ]
+          }
+        ]
+      }
+    },
+    "required": [
+      "schema_version",
+      "tool",
+      "scene_id",
+      "snapshot_id",
+      "status",
+      "trace_id",
+      "metrics",
+      "data",
+      "media",
+      "errors",
+      "limitations",
+      "execution"
+    ]
+  },
+  "$defs": {
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "resolved",
+            "ambiguous",
+            "insufficient_evidence",
+            "needs_context",
+            "cancelled"
+          ],
+          "description": "resolved=已确定唯一目标；ambiguous=有多个具体候选需澄清；insufficient_evidence=当前证据不足；needs_context=缺少前文或目标描述；cancelled=用户取消。需要提问时不可填resolved。"
+        },
+        "object_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "description": "resolved物体只填唯一目标ID；resolved区域填[]，不能把桌椅等配套设施列为多个目标；ambiguous时可填写多个候选。"
+        },
+        "evidence_ids": {
+          "type": "array",
+          "description": "必填。没有引用证据的澄清填写[]。区域目标引用card_id；物体目标引用实际返回的description_id或media_id。",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "question": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "excluded_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "description": "已查看并排除的对象ID；object_ids只填写仍符合条件的候选。"
+        },
+        "room_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "description": "区域候选或目标物体所属区域。纯区域目标时只填写一个区域，object_ids为空；物体目标可同时给出其所属区域。"
+        }
+      },
+      "required": [
+        "status",
+        "object_ids",
+        "evidence_ids",
+        "reason",
+        "question",
+        "room_ids"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "resolved"
+              }
+            }
+          },
+          "then": {
+            "oneOf": [
+              {
+                "properties": {
+                  "object_ids": {
+                    "minItems": 1,
+                    "maxItems": 1
+                  },
+                  "room_ids": {
+                    "maxItems": 16
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "object_ids": {
+                    "maxItems": 0
+                  },
+                  "room_ids": {
+                    "minItems": 1,
+                    "maxItems": 1
+                  }
+                }
+              }
+            ],
+            "properties": {
+              "evidence_ids": {
+                "minItems": 1
+              },
+              "question": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "ambiguous",
+                  "needs_context"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "question": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "cancelled"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "object_ids": {
+                "maxItems": 0
+              },
+              "room_ids": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ]
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "answer": {
+          "type": "string"
+        },
+        "grounding": {
+          "$ref": "#/$defs/decision"
+        },
+        "selection": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "selected_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "selected_room_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "candidate_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "candidate_room_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "excluded_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "selected_id",
+            "selected_room_id",
+            "candidate_ids",
+            "candidate_room_ids",
+            "excluded_ids"
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "evidence_id": {
+                "type": "string"
+              },
+              "kind": {
+                "enum": [
+                  "description",
+                  "card",
+                  "image"
+                ]
+              },
+              "object_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "uniqueItems": true
+              },
+              "room_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "uniqueItems": true
+              },
+              "text": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "evidence_id",
+              "kind",
+              "object_ids",
+              "room_ids",
+              "text"
+            ]
+          }
+        },
+        "navigation": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "const": "blocked"
+            },
+            "goal": {
+              "type": "null"
+            },
+            "reason": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "goal",
+            "reason"
+          ]
+        },
+        "handoff": {
+          "const": "not_ready"
+        }
+      },
+      "required": [
+        "answer",
+        "grounding",
+        "selection",
+        "evidence",
+        "navigation",
+        "handoff"
+      ]
+    }
+  }
+}

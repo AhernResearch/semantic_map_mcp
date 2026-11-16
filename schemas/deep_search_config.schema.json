@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "cards_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "max_turns": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 8,
+      "default": 6
+    },
+    "deadline_seconds": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 120,
+      "default": 45
+    },
+    "max_concurrency": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 8,
+      "default": 2
+    },
+    "profiles": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fast",
+        "middle",
+        "strong"
+      ],
+      "properties": {
+        "fast": {
+          "$ref": "#/$defs/profile"
+        },
+        "middle": {
+          "$ref": "#/$defs/profile"
+        },
+        "strong": {
+          "$ref": "#/$defs/profile"
+        }
+      }
+    }
+  },
+  "required": [
+    "cards_path",
+    "profiles"
+  ],
+  "$defs": {
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "endpoint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "api_key_env": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+        },
+        "api_format": {
+          "enum": [
+            "chat_completions",
+            "responses"
+          ],
+          "default": "chat_completions"
+        },
+        "output_tokens": {
+          "type": "integer",
+          "minimum": 128,
+          "maximum": 16384
+        },
+        "reasoning_effort": {
+          "enum": [
+            "none",
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ]
+        },
+        "omit_unique_items": {
+          "type": "boolean",
+          "default": false,
+          "description": "vLLM生成schema不支持uniqueItems时显式启用；宿主仍验证完整契约。"
+        }
+      },
+      "required": [
+        "endpoint",
+        "model"
+      ]
+    }
+  }
+}

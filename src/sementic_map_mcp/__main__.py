@@ -3,7 +3,7 @@ import argparse
 from pathlib import Path
 
 from .import_mfloor import import_mfloor
-from .retrieval import OpenClipEncoder
+from .multimodal import load_encoder
 from .service import MapTools
 from .store import SceneStore, read_json, write_json
 
@@ -14,6 +14,11 @@ def main():
     convert = commands.add_parser('import-mfloor')
     convert.add_argument('source')
     convert.add_argument('output')
+    embed = commands.add_parser('embed-descriptions', help='Export a new map snapshot with offline descriptions')
+    embed.add_argument('scene')
+    embed.add_argument('descriptions', type=Path)
+    embed.add_argument('output', type=Path)
+    embed.add_argument('--snapshot-id', required=True)
     call = commands.add_parser('call')
     call.add_argument('scene')
     call.add_argument('tool', choices=['list_scene', 'view_map', 'inspect_objects', 'search_candidates'])
@@ -24,12 +29,13 @@ def main():
     if args.command == 'import-mfloor':
         print(import_mfloor(args.source, args.output))
         return
+    if args.command == 'embed-descriptions':
+        from .descriptions import embed_descriptions
+        print(embed_descriptions(args.scene, args.descriptions, args.output, args.snapshot_id))
+        return
     args.output.mkdir(parents=True, exist_ok=False)
     store = SceneStore(args.scene)
-    encoder = None
-    if args.encoder_config:
-        config = read_json(args.encoder_config)
-        encoder = OpenClipEncoder(store.feature_spaces[config['space_id']], config)
+    encoder = load_encoder(store, args.encoder_config) if args.encoder_config else None
     service = MapTools(store, args.output / 'media', encoder)
     result = service.call(args.tool, read_json(args.args) if args.args else {})
     write_json(args.output / 'result.json', result.envelope)

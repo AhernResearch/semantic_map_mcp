@@ -1,0 +1,82 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "kind": {
+      "const": "image_text"
+    },
+    "pooling": {
+      "const": "LAST"
+    },
+    "weights_fingerprint": {
+      "type": "string",
+      "minLength": 1
+    },
+    "preprocess_fingerprint": {
+      "type": "string",
+      "minLength": 1
+    },
+    "query_template": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_protocol_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "model_manifest": {
+      "type": "object"
+    },
+    "settings": {
+      "type": "object"
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "object_id": {
+            "type": "string"
+          },
+          "description_id": {
+            "type": "string"
+          },
+          "source": {
+            "type": "object",
+            "required": [
+              "observation_id",
+              "image_asset_id",
+              "image_sha256",
+              "crop_xyxy",
+              "target_support",
+              "source_kind",
+              "source_refs"
+            ]
+          },
+          "crop_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "required": [
+          "object_id",
+          "description_id",
+          "source",
+          "crop_sha256"
+        ]
+      }
+    }
+  },
+  "required": [
+    "kind",
+    "pooling",
+    "weights_fingerprint",
+    "preprocess_fingerprint",
+    "query_template",
+    "source_protocol_sha256",
+    "model_manifest",
+    "settings",
+    "rows"
+  ]
+}

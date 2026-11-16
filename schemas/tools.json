@@ -224,12 +224,70 @@
                           "status",
                           "reason"
                         ]
+                      },
+                      "multimodal_search": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "status": {
+                            "enum": [
+                              "available",
+                              "partial",
+                              "unavailable"
+                            ]
+                          },
+                          "reason": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "status",
+                          "reason"
+                        ]
+                      },
+                      "object_descriptions": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "status": {
+                            "enum": [
+                              "available",
+                              "partial",
+                              "unavailable"
+                            ]
+                          },
+                          "reason": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "status",
+                          "reason"
+                        ]
                       }
                     },
                     "required": [
                       "label_search",
                       "visual_search",
-                      "object_images"
+                      "object_images",
+                      "multimodal_search",
+                      "object_descriptions"
                     ]
                   },
                   "coordinate_frame": {
@@ -282,6 +340,92 @@
                       "max_queries",
                       "max_inspect_ids"
                     ]
+                  },
+                  "coverage": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "descriptions": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "available": {
+                            "type": "integer",
+                            "minimum": 0
+                          },
+                          "total": {
+                            "type": "integer",
+                            "minimum": 0
+                          }
+                        },
+                        "required": [
+                          "available",
+                          "total"
+                        ]
+                      },
+                      "images": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "available": {
+                            "type": "integer",
+                            "minimum": 0
+                          },
+                          "total": {
+                            "type": "integer",
+                            "minimum": 0
+                          }
+                        },
+                        "required": [
+                          "available",
+                          "total"
+                        ]
+                      },
+                      "vectors": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "available": {
+                            "type": "integer",
+                            "minimum": 0
+                          },
+                          "total": {
+                            "type": "integer",
+                            "minimum": 0
+                          }
+                        },
+                        "required": [
+                          "available",
+                          "total"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "descriptions",
+                      "images",
+                      "vectors"
+                    ]
+                  },
+                  "retrieval": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "mode": {
+                        "enum": [
+                          "label",
+                          "visual",
+                          "multimodal"
+                        ]
+                      },
+                      "indexed_object_count": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "required": [
+                      "mode",
+                      "indexed_object_count"
+                    ]
                   }
                 },
                 "required": [
@@ -292,7 +436,9 @@
                   "count_unit",
                   "capabilities",
                   "coordinate_frame",
-                  "query_policy"
+                  "query_policy",
+                  "coverage",
+                  "retrieval"
                 ]
               },
               {
@@ -611,12 +757,70 @@
                             "status",
                             "reason"
                           ]
+                        },
+                        "multimodal_search": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "status": {
+                              "enum": [
+                                "available",
+                                "partial",
+                                "unavailable"
+                              ]
+                            },
+                            "reason": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "status",
+                            "reason"
+                          ]
+                        },
+                        "object_descriptions": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "status": {
+                              "enum": [
+                                "available",
+                                "partial",
+                                "unavailable"
+                              ]
+                            },
+                            "reason": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "status",
+                            "reason"
+                          ]
                         }
                       },
                       "required": [
                         "label_search",
                         "visual_search",
-                        "object_images"
+                        "object_images",
+                        "multimodal_search",
+                        "object_descriptions"
                       ]
                     },
                     "coordinate_frame": {
@@ -669,6 +873,92 @@
                         "max_queries",
                         "max_inspect_ids"
                       ]
+                    },
+                    "coverage": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "descriptions": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "available": {
+                              "type": "integer",
+                              "minimum": 0
+                            },
+                            "total": {
+                              "type": "integer",
+                              "minimum": 0
+                            }
+                          },
+                          "required": [
+                            "available",
+                            "total"
+                          ]
+                        },
+                        "images": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "available": {
+                              "type": "integer",
+                              "minimum": 0
+                            },
+                            "total": {
+                              "type": "integer",
+                              "minimum": 0
+                            }
+                          },
+                          "required": [
+                            "available",
+                            "total"
+                          ]
+                        },
+                        "vectors": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "available": {
+                              "type": "integer",
+                              "minimum": 0
+                            },
+                            "total": {
+                              "type": "integer",
+                              "minimum": 0
+                            }
+                          },
+                          "required": [
+                            "available",
+                            "total"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "descriptions",
+                        "images",
+                        "vectors"
+                      ]
+                    },
+                    "retrieval": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "mode": {
+                          "enum": [
+                            "label",
+                            "visual",
+                            "multimodal"
+                          ]
+                        },
+                        "indexed_object_count": {
+                          "type": "integer",
+                          "minimum": 0
+                        }
+                      },
+                      "required": [
+                        "mode",
+                        "indexed_object_count"
+                      ]
                     }
                   },
                   "required": [
@@ -679,7 +969,9 @@
                     "count_unit",
                     "capabilities",
                     "coordinate_frame",
-                    "query_policy"
+                    "query_policy",
+                    "coverage",
+                    "retrieval"
                   ]
                 }
               }
@@ -806,7 +1098,8 @@
                           "items": {
                             "enum": [
                               "label",
-                              "visual"
+                              "visual",
+                              "multimodal"
                             ]
                           },
                           "uniqueItems": true
@@ -823,6 +1116,14 @@
                             "string",
                             "null"
                           ]
+                        },
+                        "multimodal_match_ids": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "uniqueItems": true
                         }
                       },
                       "required": [
@@ -917,6 +1218,18 @@
                                     "type": "null"
                                   }
                                 ]
+                              },
+                              "multimodal_cosine": {
+                                "anyOf": [
+                                  {
+                                    "type": "number",
+                                    "minimum": -1,
+                                    "maximum": 1
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
                               }
                             },
                             "required": [
@@ -926,6 +1239,12 @@
                               "fusion_score"
                             ]
                           }
+                        },
+                        "description": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         }
                       },
                       "required": [
@@ -1245,7 +1564,8 @@
                             "items": {
                               "enum": [
                                 "label",
-                                "visual"
+                                "visual",
+                                "multimodal"
                               ]
                             },
                             "uniqueItems": true
@@ -1262,6 +1582,14 @@
                               "string",
                               "null"
                             ]
+                          },
+                          "multimodal_match_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "uniqueItems": true
                           }
                         },
                         "required": [
@@ -1356,6 +1684,18 @@
                                       "type": "null"
                                     }
                                   ]
+                                },
+                                "multimodal_cosine": {
+                                  "anyOf": [
+                                    {
+                                      "type": "number",
+                                      "minimum": -1,
+                                      "maximum": 1
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
                                 }
                               },
                               "required": [
@@ -1365,6 +1705,12 @@
                                 "fusion_score"
                               ]
                             }
+                          },
+                          "description": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
                           }
                         },
                         "required": [
@@ -2411,7 +2757,8 @@
                           "items": {
                             "enum": [
                               "label",
-                              "visual"
+                              "visual",
+                              "multimodal"
                             ]
                           },
                           "uniqueItems": true
@@ -2428,6 +2775,14 @@
                             "string",
                             "null"
                           ]
+                        },
+                        "multimodal_match_ids": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "uniqueItems": true
                         }
                       },
                       "required": [
@@ -2522,6 +2877,18 @@
                                     "type": "null"
                                   }
                                 ]
+                              },
+                              "multimodal_cosine": {
+                                "anyOf": [
+                                  {
+                                    "type": "number",
+                                    "minimum": -1,
+                                    "maximum": 1
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
                               }
                             },
                             "required": [
@@ -2531,6 +2898,12 @@
                               "fusion_score"
                             ]
                           }
+                        },
+                        "description": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         }
                       },
                       "required": [
@@ -2746,7 +3119,8 @@
                             "items": {
                               "enum": [
                                 "label",
-                                "visual"
+                                "visual",
+                                "multimodal"
                               ]
                             },
                             "uniqueItems": true
@@ -2763,6 +3137,14 @@
                               "string",
                               "null"
                             ]
+                          },
+                          "multimodal_match_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "uniqueItems": true
                           }
                         },
                         "required": [
@@ -2857,6 +3239,18 @@
                                       "type": "null"
                                     }
                                   ]
+                                },
+                                "multimodal_cosine": {
+                                  "anyOf": [
+                                    {
+                                      "type": "number",
+                                      "minimum": -1,
+                                      "maximum": 1
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
                                 }
                               },
                               "required": [
@@ -2866,6 +3260,12 @@
                                 "fusion_score"
                               ]
                             }
+                          },
+                          "description": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
                           }
                         },
                         "required": [

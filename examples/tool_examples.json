@@ -46,6 +46,14 @@
           "object_images": {
             "status": "unavailable",
             "reason": "无图片"
+          },
+          "multimodal_search": {
+            "status": "unavailable",
+            "reason": "Mixed vector retrieval not active"
+          },
+          "object_descriptions": {
+            "status": "unavailable",
+            "reason": "No offline descriptions"
           }
         },
         "coordinate_frame": {
@@ -58,6 +66,24 @@
           "visual_top_k": 10,
           "max_queries": 4,
           "max_inspect_ids": 8
+        },
+        "retrieval": {
+          "mode": "label",
+          "indexed_object_count": 0
+        },
+        "coverage": {
+          "descriptions": {
+            "available": 0,
+            "total": 1
+          },
+          "images": {
+            "available": 0,
+            "total": 1
+          },
+          "vectors": {
+            "available": 0,
+            "total": 1
+          }
         }
       },
       "media": [],

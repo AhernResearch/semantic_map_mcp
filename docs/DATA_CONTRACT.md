@@ -1,6 +1,10 @@
 # 统一数据与输入文件规范
 
+区域语义卡片是绑定场景快照的派生sidecar，契约见schemas/semantic_cards.schema.json。文件包含版本、scene_id/snapshot_id、scene.json哈希、全区域卡片及支持对象description_id/text，加载时逐项验证；不修改源标签、区域归属或导航绑定。非空卡片生成稳定card_id供deep_search引用，模型投影去掉支持对象明细，原始依据保留审计。详见[DEEP_SEARCH.md](DEEP_SEARCH.md)。
+
 版本1.0.0。机读约束见../schemas/scene.schema.json。schema负责结构，本文的跨字段规则同样必需。
+
+当前混合向量索引以标准feature_matrix资产注册，metadata.multimodal_index保存模型/处理协议指纹与逐行描述、观测、裁剪绑定，约束见[multimodal_index.schema.json](../schemas/multimodal_index.schema.json)。对象可有同一空间的多个视角行；不跨模型空间比较向量。加载时验证行覆盖、描述和图片绑定、归一化及指纹一致性，详见[混合召回主线](MIXED_RECALL_MAINLINE_20261112.md)。
 
 ## 1. 接收的标准目录
 
@@ -42,6 +46,7 @@
 | feature_spaces | 是 | 特征空间与矩阵，可空；无特征则visual不可用 |
 | background_asset_id | 是 | 背景资产ID或null；无背景只画框并说明 |
 | provenance | 是 | 来源记录、变换、局限，不保存凭据 |
+| description_generation | 否 | 离线描述的模型、生成协议、父快照/描述缓存哈希与覆盖标记 |
 
 有效空场景可返回空结果。只有框的场景可以展示、只有标签的场景可以精确召回；无图/无特征必须反馈能力缺失，不为凑结构生成假资产。
 
@@ -57,6 +62,7 @@ MapObject：
 |---|---|
 | object_id / source_id | 统一查询ID / 原始ID；不能当导航ID |
 | type_ids、label、aliases、description | 类型引用、原名称、别名、描述（可null） |
+| description_metadata | 可选，description_id、status、sources、provenance、error、original_description |
 | room_ids、region_assignment_source | 归属引用及来源；可多区域，计数按记录去重 |
 | bbox、center_xyz | Y-up米制AABB与几何中心；中心为(min+max)/2，不是接近站位 |
 | geometry_asset_id | 对象NPZ或null；无点云退到框投影 |
@@ -118,3 +124,11 @@ M-floor的382张选中视图来自GS，源框参与视图/裁剪选择，不能�
 schema之外需校验：所有ID唯一、引用存在、room/type/asset引用类型正确、数组行号对应ID、特征空间身份、框中心与范围、K和原图大小、刚体矩阵和相机约定、裁剪边界、所有路径/哈希、NPZ字段shape。未知源字段保存在provenance而非静默删除；来源冲突可保留，但无效几何或越界资产不能正常载入。
 
 scene.json为权威版本，缓存需绑定scene.json与资产哈希、转换器/索引版本；缓存不能悄悄修正源记录。当前SceneStore已验证schema、资产哈希、路径、数组shape/有效值、类型/区域/观测引用、框中心、裁剪范围、相机矩阵和特征行。尚未做现场坐标/身份验证。
+
+## 离线描述与统一场景存储
+
+包外缓存规范见 [OFFLINE_DESCRIPTIONS.md](OFFLINE_DESCRIPTIONS.md) 和 [Schema](../schemas/descriptions.schema.json)。记录绑定对象、有效观测、原图哈希与裁剪，保留模型与来源；description_id为记录内容哈希。只有ok记录提供描述证据，unclear/unavailable/error不得冒充成功。complete仅表示对象覆盖完整。模型描述不修改源标签，也不代表人工身份确认。
+
+统一场景支持可选description_generation和对象description_metadata，机读规范见scene.schema.json，[字段示例](../examples/embedded_descriptions.example.json)。成功外观文本写入description；原始描述（包括OCR文字）保存在description_metadata.original_description，继续参与文本检索。非ok记录保留原description。生成协议和权重身份在场景级存一份；逐对象保留状态、模型来源和图片绑定。
+
+导入必须输出新目录和不同snapshot_id。SceneStore验证图片/裁剪绑定、描述内容哈希、模型身份和complete覆盖；父场景和源描述文件哈希用于追溯。缺生成头的对象描述元数据、被改写的描述/图片绑定和额外sidecar覆盖均拒绝。工具从新scene.json读取描述，不依赖原生成目录；旧快照sidecar不能直接绑定新快照。

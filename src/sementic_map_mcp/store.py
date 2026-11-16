@@ -26,6 +26,15 @@ def digest(path):
     return result.hexdigest()
 
 
+GROUNDING_CASES = {'NG01', 'NG02', 'NG03', 'NG11', 'NG16', 'NG17'}
+
+
+def grounding_cases(store):
+    suite = read_json(SCHEMAS.parent / 'tasks/navigation_requests.json')
+    require(suite['snapshot_id'] == store.scene['snapshot_id'], 'Task snapshot differs from scene')
+    return [c for c in suite['cases'] if c['case_id'] in GROUNDING_CASES]
+
+
 def require(condition, message):
     if not condition:
         raise ValueError(message)
@@ -56,6 +65,20 @@ class SceneStore:
             setattr(self, name, index(self.scene[name], key))
         self.arrays = {}
         self._validate()
+        self.descriptions = None
+        if 'description_generation' in self.scene:
+            from .descriptions import Descriptions
+            require(self.scene['description_generation']['source_scene']['scene_id'] == self.scene['scene_id'],
+                    'Description source scene mismatch')
+            require(self.scene['description_generation']['source_scene']['snapshot_id'] != self.scene['snapshot_id'],
+                    'Embedded descriptions require a new snapshot')
+            self.descriptions = Descriptions(self)
+        else:
+            require(not any('description_metadata' in item for item in self.objects.values()),
+                    'Description metadata requires generation header')
+        from .multimodal import validate_index
+        for space in self.feature_spaces.values():
+            validate_index(self, space)
 
     def path(self, asset_id):
         return package_path(self.root, self.assets[asset_id]['path'])

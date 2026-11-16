@@ -1,0 +1,10 @@
+{
+  "backend": "http_embedding",
+  "space_id": "qwen3vl-mixed-2b",
+  "encoder": "Qwen/Qwen3-VL-Embedding-2B",
+  "weights_fingerprint": "sha256:a4306d8073041d7b1d27688debf81111f4970c7d3b051845f169300d65b5413b",
+  "preprocess_fingerprint": "sha256:676814f7d30e429f739f2553dd72b3f321d8293e15d4d7d4dc24437a77690b4e",
+  "query_template": "<|im_start|>system\nRepresent the user's input.<|im_end|>\n<|im_start|>user\n{query}<|im_end|>\n<|im_start|>assistant\n",
+  "endpoint": "http://127.0.0.1:8891/v1",
+  "served_model": "map-qwen3vl-embedding-2b"
+}

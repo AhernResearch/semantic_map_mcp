@@ -7,7 +7,7 @@ import json
 import shutil
 from pathlib import Path
 
-from map_query_tools.store import read_json, write_json
+from sementic_map_mcp.store import read_json, write_json
 
 STATUS = {'resolved': '模型选出一个对象（待核实）', 'ambiguous': '有多个可能，需要追问',
           'insufficient_evidence': '证据不足，不能确定', 'needs_context': '缺少上下文，需要补充',
@@ -131,10 +131,10 @@ def export(run, output, histories):
                     body.append(f'<p>下一页：{esc(shown["data"]["next_page"])} · 召回池共 {shown["data"]["total_candidates"]} 个候选</p>')
                 if envelope['errors']:
                     body.append(detail('工具报告的问题', envelope['errors']))
-                context_file = toolfile.with_name(toolfile.name.replace('-tool.json', '-model-context.json'))
-                shown = read_json(context_file) if context_file.exists() else envelope
+                preview_file = toolfile.with_name(toolfile.name.replace('-tool.json', '-preview.json'))
+                audit_media = envelope['media'] + (read_json(preview_file)['media'] if preview_file.exists() else [])
                 for media in shown['media']:
-                    source = run / 'media' / Path(next(m['uri'] for m in envelope['media'] if m['media_id'] == media['media_id'])).name
+                    source = run / 'media' / Path(next(m['uri'] for m in audit_media if m['media_id'] == media['media_id'])).name
                     digest = hashlib.sha256(source.read_bytes()).hexdigest()
                     if digest not in sent:
                         raise ValueError(f'{cid}: media was not supplied in recorded model requests: {media["media_id"]}')
@@ -142,9 +142,8 @@ def export(run, output, histories):
                     url = f'raw/{run.name}/media/{source.name}'
                     caption = f'对象 {", ".join(media["object_ids"])} · 视图 {", ".join(media["observation_ids"])} · media_id {media["media_id"]}'
                     body.append(f'<figure><a href="{esc(url)}" target="_blank"><img loading="lazy" src="{esc(url)}" alt="{esc(caption)}"></a><figcaption>{esc(caption)}<br>已核对：这些图片字节确实出现在本用例发送给模型的请求中。点击查看原图。</figcaption></figure>')
-                context_file = toolfile.with_name(toolfile.name.replace('-tool.json', '-model-context.json'))
                 if context_file.exists():
-                    body.append(detail('模型实际收到的工具文本', read_json(context_file)))
+                    body.append(detail('模型实际收到的工具文本', shown))
                 body.append(detail('原始工具数据（含完整审计字段）', envelope))
             body += [detail('原始模型响应', response), f'<div class="links"><a href="{esc(root)}/{esc(turn)}-request.json">完整模型输入（含历史和图片字节）</a><a href="{esc(root)}/{esc(p.name)}">原始响应文件</a></div>', '</article>']
         for request_file in sorted(folder.glob('*-request.json')):

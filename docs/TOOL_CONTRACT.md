@@ -1,5 +1,9 @@
 # 工具输入输出与执行规则
 
+MCP宿主新增可选高层工具`deep_search(instruction, context='', think_mode='fast')`，由服务端显式配置三档模型与区域卡片后启用。fast使用本地9B，middle使用Sonnet，strong使用GPT-6 Sol；模型由服务端profiles指定，不自动换档。原始MapTools四工具不混入在线生成调用。独立契约、区域/物体决策、context、预算与错误见[DEEP_SEARCH.md](DEEP_SEARCH.md)及schemas/deep_search.schema.json。
+
+当前主线为图文混合向量召回、检索文本描述返回，见[MIXED_RECALL_MAINLINE_20261112.md](MIXED_RECALL_MAINLINE_20261112.md)。原始候选新增description；混合通道使用match_basis/channels_used=multimodal、multimodal_match_ids、multimodal_cosine，不将其标为CLIP visual_cosine。先合并视角到唯一对象，再截断候选池；底层截断标记继续保留。
+
 版本1.0.0。机读定义：../schemas/tools.json。接口实例绑定场景快照，场景/版本出现在输出而不要求模型输入。这里的JSON示意省略公共字段时以schema为准，完整样例见examples/tool_examples.json。
 
 ## 1. 公共输出
@@ -151,3 +155,60 @@ Agent 的最终决策是宿主输出，不属于地图工具返回。见 AGENT_L
 view_map 已改为候选周边取景：候选中心范围外扩至少2米、或跨度的18%，保持X/Z等比例投影及所有分页一致的视窗。背景使用本地场景点云，按当前视窗内Y高度15%—85%分位保留后投影、密度着色、0.7像素平滑；并叠加淡色对象轴对齐包围盒。这里是几何背景，不是通行性或墙体识别结果。缺少背景资产时仍可绘制候选并在图中明确说明。标签为ID＋短名称，图像/像素矩阵合同不变。无候选时沿用区域或场景范围。
 
 此前“纯白底、仅中心点、虚线区域”的描述是旧版本。绘图参考semantic_map_query的分层与突出标注，未复制导航站位/路径逻辑。原始点云及对象数据不改。
+
+### 检索拼图试验（2026-11-11）
+
+Agent/MCP 展示层默认在 search_candidates 当前页（最多5个候选）附加一张物体图片拼图。
+每对象取与 inspect_objects 相同排序的第一视角，沿用已有完整视角/物体裁剪证据板；每格600×400，最多3列，5项时1800×800。对象ID与名称显示在每格顶部。细节不足时仍可用 inspect_objects 查看单对象大图或 view=2。
+
+原始 MapTools.search_candidates 与 schemas/tools.json 保持候选召回接口，不绘图；共享宿主适配器 sementic_map_mcp.preview.call_for_model 负责分页后绘图。返回 raw_result、model_context、model_media、raw_preview。本地 Agent 与 harness MCP 使用同一适配器。
+
+模型 data.preview 包含 media_id、cells、missing_ids。每个有图 cell 给 object_id、observation_id、source_media_id、target_support、cell_xyxy、panels、next_view；panels 的 panel_xyxy 为拼图像素坐标，original_crop_xyxy/original_size 保留原图坐标。每格可包含 full/crop 两个面板。无图候选在对应格标注缺图，并出现在 missing_ids，模型状态为 partial，错误为 asset_missing。空页/空召回不生成拼图。不伪造缺失的第二视角。
+
+raw_preview 另保留 source_kind 和完整媒体元数据（含uri），写入 *-preview.json；结构见 schemas/candidate_preview.schema.json。原始 *-tool.json 继续保存未经模型投影的检索结果，*-model-context.json 保存模型实际收到的 JSON，实际图片字节另进入模型请求。来源审计字段继续按 agent.model_context 规则投影。
+
+拼图媒体的 object_ids 只包含实际有图的对象；宿主允许引用拼图 media_id 直接选定这些对象，无须额外 inspect。缺图对象不得因占有拼图格子而被视作已看图。resolved 仍须通过已见ID/图片证据校验，导航 goal 仍为空。
+
+Python run_agent/chat 的 search_preview=False 用于与原先“检索后再看图”流程进行对照，默认True。测试该开关时两处必须一致。Agent新增 timings.json 记录模型与工具耗时；结构测试不能视为真实模型性能验收。
+
+结构示例：examples/candidate_preview.example.json（示意图片路径，不是实际场景资产）。
+
+### 完整Agent图片组织对照参数
+
+宿主可显式设置 `run_agent(..., image_packing='single')`，默认仍为 `'montage'`；该参数不是模型工具参数，也不改变原始检索API。`preview.call_for_model(..., image_packing=...)` 共用同一生成逻辑。两种格式的提示词和工具说明统一称“物体图片”，避免提前暗示图片组织形式。
+
+single模式把拼图中实际有图的每个600×400格子原像素分开返回；候选和视角排序不变。raw_preview.media_id为null，cells每项增加实际media_id，cell_xyxy/panels.panel_xyxy改为对应单图的局部坐标；media包含0–5个实际PNG的完整元数据。模型投影去掉无值的顶层media_id，通过cells与media列表引用实际图片。缺图候选继续missing_ids/asset_missing，不借占位格生成图像证据。montage模式及inspect_objects的图片预算不变。
+
+结构检查与图片像素一致性、单图证据引用检查在unittest中覆盖。对照入口 `scripts/compare_agent_packing.py`：真实自由运行Agent，最多8轮，1600输出token，每请求120秒socket超时，固定两任务各两格式共4次，无自动重试。每次记录从接收指令到结果/失败的总耗时，排除一次性场景与编码器加载；查询和翻页可因模型选择分叉，不能把总耗时差直接解释为拼接的因果效果。
+
+### 拼图分辨率对照参数
+
+Python宿主可设置 `MapTools(..., montage_max_width=1200)`。默认None保持原尺寸；正整数最大宽度只对候选montage生效，禁止与single图片组织同时配置，不修改inspect_objects大图、地图或源图片。1800×800的5候选拼图按LANCZOS等比缩至1200×533；不会上采样本来较小的拼图。
+
+缩放同步更新cell_xyxy和panels.panel_xyxy；original_crop_xyxy/original_size及原始source_media_id保持不变。实际媒体ID、PNG字节和width/height按缩放结果生成，raw_preview审计和模型上下文均与图片对应。该参数不暴露给模型，记录在每任务protocol.json。
+
+Agent历史保持追加，图片在工具返回时按实例固定配置生成，后续轮次直接复用已发送内容，不重新缩放或删除历史图片。此性质仅保证客户端前缀未被主动改写，不代表网关一定命中缓存。
+
+### 单图半尺寸试验
+
+宿主可设置 `MapTools(..., single_max_width=300)`，并通过 `run_agent(..., image_packing='single')` 发送每候选独立图片。默认None仍为600×400；300宽对应300×200，即宽高各减半、像素数为25%。该参数只作用于search候选图，不改变inspect_objects大图、空间图或源图片。
+
+single_max_width必须为正整数，且只可与single组织使用；montage_max_width只可与montage使用。两种组织复用Renderer.resize_preview更新实际PNG、媒体ID及cell/panel局部坐标，original_crop_xyxy/original_size不变。模型上下文不接收缩放策略参数；protocol.json记录该配置。历史保持追加，已发送图片字节不改写。
+
+对照入口继续复用scripts/compare_image_packing.py和scripts/compare_agent_packing.py，使用 `--comparison single-resolution`；固定候选阶段指定 `--max-tokens 1600`，两组共用同一模型预算。原在线默认未调整。
+
+### 英文查询与及时决策策略
+
+Agent/MCP工具描述要求search_candidates和view_map的queries全部为英文，不提交中文或中英混合描述。用户指令和回答仍可中文；模型在生成工具参数时自行转换为具体英文短语，工具不会隐式翻译。首轮优先1条具体描述，不堆砌近义词。共享英文规则定义在agent.ENGLISH_QUERY_POLICY，同时写入模型工具描述和queries元素说明。
+
+本地Agent系统提示和search工具描述同时强调：明确匹配就结束；多个具体匹配且缺少用户条件时直接提出具体澄清问题；无匹配时根据具体缺口选择翻页或改写，避免同义改写后反复看相同对象。
+
+这是模型调用规范，原始MapTools API仍保留中文检索和登记别名能力，不加入ASCII/语言自动识别拒绝规则，不静默改写查询或源标签。真实运行应逐条核验queries，不能把描述中的“必须英文”宣称为服务端已自动验证语言。
+
+模型调用示例见examples/agent_english_query.example.json。原始schemas/tools.json参数结构与召回算法保持不变；宿主实际模型定义由agent.model_tools投影生成。图片尺寸、分页和证据校验规则不变。
+
+真实对照发现模型会在改写查询时带上旧page，故描述进一步明确：改写queries或room_ids必须从page=1开始；只有二者完全不变时才可沿next_page翻页。该说明不更改无状态分页API，也不会由服务端静默重写页码。英文v1对照与增加该规则的v2试跑分别保存，不覆盖原结果。
+
+## 可选的离线描述投影
+
+MapTools自动使用scene.json内嵌描述，旧包也可用descriptions_path显式启用包外缓存；两者不能叠加覆盖。preview.call_for_model为search_candidates当页候选附加visual_description={description_id,text}，不返回搜索图片；缺项列入missing_description_ids和description_unavailable错误。原始API的JSON结构和inspect_objects图片契约不变；新包的description与保留的原描述参与文本召回。Agent可引用同对象描述ID作为证据；原始工具、模型上下文和描述来源审计分别保存。详见[离线描述](OFFLINE_DESCRIPTIONS.md)。

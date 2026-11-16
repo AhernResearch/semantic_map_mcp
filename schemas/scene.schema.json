@@ -76,6 +76,58 @@
         "type": "string",
         "minLength": 1
       }
+    },
+    "description_generation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "generation": {
+          "type": "object"
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "source_scene": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "scene_id": {
+              "type": "string"
+            },
+            "snapshot_id": {
+              "type": "string"
+            },
+            "scene_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "scene_id",
+            "snapshot_id",
+            "scene_sha256"
+          ]
+        },
+        "source_descriptions_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "model",
+        "endpoint",
+        "generation",
+        "complete",
+        "source_scene",
+        "source_descriptions_sha256"
+      ]
     }
   },
   "required": [
@@ -543,6 +595,9 @@
             "type": "string",
             "minLength": 1
           }
+        },
+        "description_metadata": {
+          "$ref": "#/$defs/description_metadata"
         }
       },
       "required": [
@@ -693,6 +748,67 @@
         "camera_convention",
         "provenance"
       ]
+    },
+    "description_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "description_id",
+        "status",
+        "sources",
+        "provenance",
+        "error",
+        "original_description"
+      ],
+      "properties": {
+        "description_id": {
+          "type": "string",
+          "pattern": "^desc-[a-f0-9]{64}$"
+        },
+        "status": {
+          "enum": [
+            "ok",
+            "unclear",
+            "unavailable",
+            "error"
+          ]
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "observation_id",
+              "image_asset_id",
+              "image_sha256",
+              "crop_xyxy",
+              "target_support",
+              "source_kind",
+              "source_refs"
+            ]
+          }
+        },
+        "provenance": {
+          "type": "object"
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "original_description": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
     }
   },
   "title": "MapQueryTools Scene Package 1.0.0"

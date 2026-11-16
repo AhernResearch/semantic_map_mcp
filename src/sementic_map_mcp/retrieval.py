@@ -4,7 +4,7 @@ import unicodedata
 import numpy as np
 
 from .ports import TextEncoder
-from .store import require
+from .store import digest, read_json, require
 
 
 def normalize(text):
@@ -12,10 +12,14 @@ def normalize(text):
 
 
 class OpenClipEncoder:
+    @classmethod
+    def from_config(cls, store, path):
+        config = read_json(path)
+        return cls(store.feature_spaces[config['space_id']], config)
+
     def __init__(self, space, config):
         import open_clip
         import torch
-        from .store import digest
         checkpoint, device = config['checkpoint'], config.get('device', 'cpu')
         require(config['encoder'] == space['encoder'] and
                 config['weights_fingerprint'] == space['weights_fingerprint'] and
@@ -40,9 +44,12 @@ class Retriever:
     def __init__(self, store, encoder: TextEncoder | None = None, top_k=10):
         self.store, self.encoder, self.top_k = store, encoder, top_k
         self.space = None
+        self.channel = 'visual'
         if encoder is not None:
             self.space = store.feature_spaces[encoder.space_id]
             require(encoder.fingerprint == self.space['weights_fingerprint'], 'encoder identity mismatch')
+            if 'multimodal_index' in store.assets[self.space['matrix_asset_id']]['metadata']:
+                self.channel = 'multimodal'
 
     def search(self, query, objects):
         q = normalize(query)
@@ -54,6 +61,7 @@ class Retriever:
                 names.extend([t['name'], *t['aliases']])
             names = [normalize(n) for n in names]
             details = normalize(' '.join([item['description'] or '',
+                               item.get('description_metadata', {}).get('original_description') or '',
                                *[str(a['value']) for a in item['attributes']]]))
             if q in names:
                 matched.append((0, item['object_id'], 'label_exact'))
@@ -78,13 +86,14 @@ class Retriever:
                     and np.linalg.norm(vector) > 0, 'invalid text embedding')
             vector /= np.linalg.norm(vector)
             matrix = self.store.arrays[self.space['matrix_asset_id']]
-            scores = []
+            scores = {}
             for item in objects:
                 for feature in item['feature_refs']:
                     if feature['space_id'] == self.encoder.space_id and feature['valid']:
                         v = matrix[feature['row']].astype(np.float32)
-                        scores.append((item['object_id'], float(np.clip(v @ vector / np.linalg.norm(v), -1, 1))))
-            scores.sort(key=lambda x: (-x[1], x[0]))
+                        score = float(np.clip(v @ vector / np.linalg.norm(v), -1, 1))
+                        scores[item['object_id']] = max(scores.get(item['object_id'], -float('inf')), score)
+            scores = sorted(scores.items(), key=lambda x: (-x[1], x[0]))
             truncated = len(scores) > self.top_k
             visual = {oid: (rank, score) for rank, (oid, score) in enumerate(scores[:self.top_k], 1)}
         rows = []
@@ -92,12 +101,18 @@ class Retriever:
             lr, basis = labels[oid] if oid in labels else (None, None)
             vr, cosine = visual[oid] if oid in visual else (None, None)
             rows.append(dict(object_id=oid,
-                             match_basis=([basis] if basis else []) + (['visual'] if vr else []),
+                             match_basis=([basis] if basis else []) + ([self.channel] if vr else []),
                              score=dict(query=query, label_rank=lr, visual_cosine=cosine,
                                         fusion_score=sum(1 / (60 + r) for r in (lr, vr) if r))))
+            if self.channel == 'multimodal':
+                rows[-1]['score']['visual_cosine'] = None
+                rows[-1]['score']['multimodal_cosine'] = cosine
         rows.sort(key=lambda x: (-x['score']['fusion_score'], x['object_id']))
-        group = dict(query=query, encoded_query=text, label_match_ids=list(labels), visual_match_ids=list(visual),
+        group = dict(query=query, encoded_query=text, label_match_ids=list(labels),
+                     visual_match_ids=list(visual) if self.channel == 'visual' else [],
                      candidate_ids=[r['object_id'] for r in rows],
-                     channels_used=['label'] + (['visual'] if self.encoder else []),
+                     channels_used=['label'] + ([self.channel] if self.encoder else []),
                      visual_top_k=self.top_k, truncated=truncated)
+        if self.channel == 'multimodal':
+            group['multimodal_match_ids'] = list(visual)
         return group, rows

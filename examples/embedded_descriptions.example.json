@@ -1,0 +1,102 @@
+{
+  "note": "Illustrative header and object fragments, not a complete loadable scene package",
+  "description_generation": {
+    "model": "fixture-vlm",
+    "endpoint": "fixture",
+    "generation": {
+      "prompt": "Illustrative fixture only",
+      "temperature": 0,
+      "retries": 0
+    },
+    "complete": false,
+    "source_scene": {
+      "scene_id": "demo-scene",
+      "snapshot_id": "demo-v1",
+      "scene_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    "source_descriptions_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "object": {
+    "object_id": "example-object",
+    "source_id": "example-object",
+    "type_ids": [
+      "cabinet"
+    ],
+    "label": "柜子",
+    "aliases": [],
+    "description": "A white rectangular cabinet with a flat front.",
+    "room_ids": [
+      "R01"
+    ],
+    "region_assignment_source": "synthetic_example",
+    "bbox": {
+      "min": [
+        1,
+        0,
+        -3
+      ],
+      "max": [
+        2,
+        2,
+        -2
+      ]
+    },
+    "center_xyz": [
+      1.5,
+      1,
+      -2.5
+    ],
+    "geometry_asset_id": null,
+    "feature_refs": [],
+    "observation_links": [
+      {
+        "observation_id": "example-view",
+        "crop_xyxy": [
+          0,
+          0,
+          80,
+          60
+        ],
+        "target_support": "valid"
+      }
+    ],
+    "attributes": [],
+    "identity_status": "unresolved",
+    "entity_id": null,
+    "source_links": [],
+    "provenance": [
+      "人工结构样例，无图片/特征，不证明视觉能力"
+    ],
+    "description_metadata": {
+      "original_description": null,
+      "status": "ok",
+      "sources": [
+        {
+          "observation_id": "example-view",
+          "image_asset_id": "example-image",
+          "image_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+          "crop_xyxy": [
+            0,
+            0,
+            80,
+            60
+          ],
+          "target_support": "valid",
+          "source_kind": "real_camera",
+          "source_refs": [
+            "Illustrative fixture"
+          ]
+        }
+      ],
+      "provenance": {
+        "model": "fixture-vlm",
+        "trace": "0000",
+        "object_refs": [
+          "Illustrative fixture"
+        ]
+      },
+      "error": null,
+      "description_id": "desc-f4843ce6eb05331d02b21a356d85b30577a9b0a1f607e6cb31f27df25e18aab0"
+    }
+  }
+}

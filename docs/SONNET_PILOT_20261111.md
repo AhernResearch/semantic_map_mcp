@@ -54,7 +54,7 @@ v3在请求阶段收到HTTP400，端点明确不支持工具input_schema顶层�
 
 完整模型判断见各用例result.json，统计见execution_audit.json。13项单元测试通过。非resolved的ID不是已选目标，尤其NG01/NG16列出的是存在标签冲突的记录。
 
-运行入口：`PYTHONPATH=map_query_tools/src HF_HUB_OFFLINE=1 envs/cg/bin/python map_query_tools/scripts/run_grounding_agent.py map_query_tools/local_data/mfloor-v1 map_query_tools/runs/mfloor_smoke/encoder.json <新输出目录> --endpoint https://lingzhi.agibot.com/v1 --model claude-sonnet-5-5`。认证从既有配置注入MAP_AGENT_API_KEY，仅存进程环境。
+运行入口：`PYTHONPATH=sementic_map_mcp/src HF_HUB_OFFLINE=1 envs/cg/bin/python sementic_map_mcp/scripts/run_grounding_agent.py sementic_map_mcp/local_data/mfloor-v1 sementic_map_mcp/runs/mfloor_smoke/encoder.json <新输出目录> --endpoint https://lingzhi.agibot.com/v1 --model claude-sonnet-5-5`。认证从既有配置注入MAP_AGENT_API_KEY，仅存进程环境。
 
 ## 面向阅读的完整 trace
 
@@ -67,10 +67,10 @@ v3在请求阶段收到HTTP400，端点明确不支持工具input_schema顶层�
 可重建命令（输出目录必须新建）：
 
 ```bash
-PYTHONPATH=map_query_tools/src envs/cg/bin/python map_query_tools/scripts/export_agent_trace.py \
-  map_query_tools/runs/sonnet_agent_v4_20261111 map_query_tools/runs/trace-review-new \
-  --history map_query_tools/runs/sonnet_agent_20261111 \
-  map_query_tools/runs/sonnet_agent_v2_20261111 map_query_tools/runs/sonnet_agent_v3_20261111
+PYTHONPATH=sementic_map_mcp/src envs/cg/bin/python sementic_map_mcp/scripts/export_agent_trace.py \
+  sementic_map_mcp/runs/sonnet_agent_v4_20261111 sementic_map_mcp/runs/trace-review-new \
+  --history sementic_map_mcp/runs/sonnet_agent_20261111 \
+  sementic_map_mcp/runs/sonnet_agent_v2_20261111 sementic_map_mcp/runs/sonnet_agent_v3_20261111
 ```
 
 ## 本地服务与 VPS 访问

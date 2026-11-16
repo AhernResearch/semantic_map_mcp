@@ -21,6 +21,7 @@
     },
     "evidence_ids": {
       "type": "array",
+      "description": "引用实际已返回且支持对应对象的图片media_id或离线描述description_id。",
       "items": {
         "type": "string"
       },

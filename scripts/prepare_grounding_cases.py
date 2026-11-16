@@ -2,11 +2,9 @@
 import argparse
 from pathlib import Path
 
-from map_query_tools.store import SceneStore, read_json, write_json
-from map_query_tools.service import MapTools
-from map_query_tools.retrieval import OpenClipEncoder
-
-CASES = {'NG01', 'NG02', 'NG03', 'NG11', 'NG16', 'NG17'}
+from sementic_map_mcp.retrieval import OpenClipEncoder
+from sementic_map_mcp.service import MapTools
+from sementic_map_mcp.store import SceneStore, grounding_cases, write_json
 
 
 def main():
@@ -17,17 +15,10 @@ def main():
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
     store = SceneStore(args.scene)
-    config = read_json(args.encoder_config)
-    tools = MapTools(store, args.output / 'media',
-                     OpenClipEncoder(store.feature_spaces[config['space_id']], config))
-    suite = read_json(Path(__file__).resolve().parents[1] / 'tasks/navigation_requests.json')
-    if suite['snapshot_id'] != store.scene['snapshot_id']:
-        raise ValueError('Task snapshot differs from scene')
+    tools = MapTools(store, args.output / 'media', OpenClipEncoder.from_config(store, args.encoder_config))
     write_json(args.output / 'scene_summary.json', tools.list_scene().envelope)
     rows = []
-    for case in suite['cases']:
-        if case['case_id'] not in CASES:
-            continue
+    for case in grounding_cases(store):
         plan = case['retrieval_plan']
         # Region-name ambiguity uses the room inventory, not an empty semantic query.
         result = (tools.search_candidates(plan['queries'], plan['room_ids'])

@@ -5,16 +5,16 @@
 ## 本次执行
 
 ```bash
-PYTHONPATH=map_query_tools/src envs/cg/bin/python -m map_query_tools import-mfloor \
+PYTHONPATH=sementic_map_mcp/src envs/cg/bin/python -m sementic_map_mcp import-mfloor \
   '/home/agiuser/下载/同事4090_20261110/mfloor_agent_minimal' \
-  map_query_tools/local_data/mfloor-v1
+  sementic_map_mcp/local_data/mfloor-v1
 
-PYTHONPATH=map_query_tools/src envs/cg/bin/python -m unittest discover \
-  -s map_query_tools/tests -v
+PYTHONPATH=sementic_map_mcp/src envs/cg/bin/python -m unittest discover \
+  -s sementic_map_mcp/tests -v
 
-PYTHONPATH=map_query_tools/src envs/cg/bin/python -m map_query_tools call \
-  map_query_tools/local_data/mfloor-v1 list_scene \
-  --output map_query_tools/runs/cli_list_verified
+PYTHONPATH=sementic_map_mcp/src envs/cg/bin/python -m sementic_map_mcp call \
+  sementic_map_mcp/local_data/mfloor-v1 list_scene \
+  --output sementic_map_mcp/runs/cli_list_verified
 ```
 
 - 转换与加载：191条对象记录、382个GS视图、61个语义类型、4个源区域及1个未归属容器；包路径 local_data/mfloor-v1。
@@ -38,7 +38,7 @@ PYTHONPATH=map_query_tools/src envs/cg/bin/python -m map_query_tools call \
 
 执行：
 
-- `python -m compileall -q map_query_tools/src`：Python Protocol和数据类语法检查通过。
+- `python -m compileall -q sementic_map_mcp/src`：Python Protocol和数据类语法检查通过。
 - 使用已有 `envs/cg/bin/python` 中的 `jsonschema.Draft202012Validator` 执行内联检查：没有安装或修改环境。
 - `check_schema` 检查scene schema及三个工具的输入/输出schema，共7份，通过。
 - examples/scene.json通过场景schema；三个工具请求和响应分别通过对应schema。
@@ -50,4 +50,4 @@ PYTHONPATH=map_query_tools/src envs/cg/bin/python -m map_query_tools call \
 
 按用户要求，view_map默认改为白底候选中心+ID，不画点云/GS和对象外观；源区域范围用虚线，多页保持同一坐标范围。沿用三工具输入输出契约。
 
-执行 `PYTHONPATH=map_query_tools/src envs/cg/bin/python -m unittest discover -s map_query_tools/tests -v`，9项通过。真实H/14查询R01“椅子/门”，返回22个候选、一张空间简图，结果为ok，保存于runs/schematic_preview/result.json。已查看图片，检查文字可读及点和ID的就近对应；未将这项人工绘图检查视为模型空间理解准确率验证。
+执行 `PYTHONPATH=sementic_map_mcp/src envs/cg/bin/python -m unittest discover -s sementic_map_mcp/tests -v`，9项通过。真实H/14查询R01“椅子/门”，返回22个候选、一张空间简图，结果为ok，保存于runs/schematic_preview/result.json。已查看图片，检查文字可读及点和ID的就近对应；未将这项人工绘图检查视为模型空间理解准确率验证。

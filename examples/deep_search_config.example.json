@@ -1,0 +1,26 @@
+{
+  "cards_path": "/absolute/path/to/semantic-cards.json",
+  "profiles": {
+    "fast": {
+      "endpoint": "http://127.0.0.1:8892/v1",
+      "model": "qwen35-9b-fp8",
+      "omit_unique_items": true
+    },
+    "middle": {
+      "endpoint": "https://lingzhi.agibot.com/v1",
+      "api_key_env": "MAP_AGENT_API_KEY",
+      "model": "claude-sonnet-5"
+    },
+    "strong": {
+      "endpoint": "https://lingzhi.agibot.com/v1",
+      "api_key_env": "MAP_AGENT_API_KEY",
+      "model": "gpt-6-sol",
+      "api_format": "responses",
+      "reasoning_effort": "medium",
+      "output_tokens": 4096
+    }
+  },
+  "max_turns": 6,
+  "deadline_seconds": 45,
+  "max_concurrency": 2
+}

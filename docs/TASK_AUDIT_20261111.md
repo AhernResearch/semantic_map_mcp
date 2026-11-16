@@ -5,11 +5,11 @@
 ## 已执行
 
 ```bash
-PYTHONPATH=map_query_tools/src HF_HUB_OFFLINE=1 envs/cg/bin/python \
-  map_query_tools/scripts/audit_candidate_recall.py \
-  map_query_tools/local_data/mfloor-v1 \
-  map_query_tools/runs/mfloor_smoke/encoder.json \
-  map_query_tools/runs/task_recall_audit
+PYTHONPATH=sementic_map_mcp/src HF_HUB_OFFLINE=1 envs/cg/bin/python \
+  sementic_map_mcp/scripts/audit_candidate_recall.py \
+  sementic_map_mcp/local_data/mfloor-v1 \
+  sementic_map_mcp/runs/mfloor_smoke/encoder.json \
+  sementic_map_mcp/runs/task_recall_audit
 ```
 
 输出：`runs/task_recall_audit/retrieval.json`。直接调用现有Retriever，不生成地图、不改检索参数或源数据。对象图片通过现有inspect_objects读取，响应在同目录inspection.json，实际PNG在media/。

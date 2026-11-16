@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0.0",
+  "scene_id": "example-scene",
+  "snapshot_id": "example-snapshot",
+  "scene_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "model": "qwen35-4b",
+  "endpoint": "http://127.0.0.1:8890/v1",
+  "generation": {
+    "workers": 4,
+    "retries": 0,
+    "chat_template_kwargs": {
+      "enable_thinking": false
+    }
+  },
+  "complete": false,
+  "records": [
+    {
+      "object_id": "example-object",
+      "status": "ok",
+      "text": "A white rectangular cabinet with a flat front.",
+      "sources": [
+        {
+          "observation_id": "example-view",
+          "image_asset_id": "example-image",
+          "image_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+          "crop_xyxy": [
+            0,
+            0,
+            80,
+            60
+          ],
+          "target_support": "valid",
+          "source_kind": "real_camera",
+          "source_refs": [
+            "Illustrative fixture"
+          ]
+        }
+      ],
+      "provenance": {
+        "model": "qwen35-4b",
+        "trace": "0000",
+        "object_refs": [
+          "Illustrative fixture"
+        ]
+      },
+      "error": null,
+      "description_id": "desc-0758ee0f920dfc523222318b333489b80e984dbf660cb360cb1c37a551c30398"
+    }
+  ]
+}

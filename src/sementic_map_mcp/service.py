@@ -1,18 +1,28 @@
 """Read-only model-facing tools. No model calls except the injected text encoder."""
+from copy import deepcopy
+from functools import lru_cache
+import json
+
 from jsonschema import Draft202012Validator, ValidationError
 
 from .ports import ToolResult
 from .render import FONT, Renderer
 from .retrieval import Retriever
-from .store import SCHEMAS, read_json
+from .store import SCHEMAS, read_json, require
 
 
 class MapTools:
-    def __init__(self, store, output, encoder=None, font=FONT):
+    def __init__(self, store, output, encoder=None, font=FONT, montage_max_width=None, single_max_width=None, descriptions_path=None):
         self.store = store
+        from .descriptions import Descriptions
+        require(not (descriptions_path and store.descriptions),
+                'Scene already embeds descriptions; an external override is not allowed')
+        self.descriptions = Descriptions(store, descriptions_path) if descriptions_path else store.descriptions
         self.retriever = Retriever(store, encoder)
-        self.renderer = Renderer(store, output, font)
+        self.renderer = Renderer(store, output, font, montage_max_width, single_max_width)
         self.schemas = {t['name']: t for t in read_json(SCHEMAS / 'tools.json')['tools']}
+        # One immutable snapshot and encoder per instance; bound image memory to 32 requests.
+        self._execute = lru_cache(maxsize=32)(self._execute)
 
     def call(self, tool, arguments):
         if tool not in self.schemas:
@@ -24,7 +34,10 @@ class MapTools:
         except (ValidationError, ValueError) as error:
             return self._result(tool, None, errors=[self._error('invalid_request', str(error), [])],
                                 status='invalid_request')
-        return getattr(self, '_' + tool)(**arguments)
+        return deepcopy(self._execute(tool, json.dumps(arguments, sort_keys=True)))
+
+    def _execute(self, tool, arguments_json):
+        return getattr(self, '_' + tool)(**json.loads(arguments_json))
 
     def list_scene(self):
         return self.call('list_scene', {})
@@ -53,13 +66,19 @@ class MapTools:
 
     def _list_scene(self):
         objects = list(self.store.objects.values())
-        images = sum(bool(o['observation_links']) for o in objects)
+        images = sum(any(link['target_support'] == 'valid' for link in o['observation_links']) for o in objects)
         visual = self.retriever.encoder is not None
         def capability(ready, reason):
             return dict(status='available' if ready else 'unavailable', reason=None if ready else reason)
-        image_cap = capability(images > 0, 'No associated images')
-        if 0 < images < len(objects):
-            image_cap = dict(status='partial', reason='Some objects have no associated images')
+        def covered(count, missing):
+            if 0 < count < len(objects):
+                return dict(status='partial', reason=missing)
+            return capability(count > 0, missing)
+        descriptions = sum(bool(self.descriptions.get(o['object_id'])) for o in objects) if self.descriptions else 0
+        indexed = sum(any(f['space_id'] == self.retriever.encoder.space_id and f['valid']
+                          for f in o['feature_refs']) for o in objects) if visual else 0
+        coverage = {name: dict(available=count, total=len(objects)) for name, count in
+                    [('descriptions', descriptions), ('images', images), ('vectors', indexed)]}
         rooms = [dict(room_id=rid, name=r['name'], kind=r['kind'],
                       object_count=len(scoped := self.store.scoped([rid])),
                       type_ids=sorted({tid for o in scoped for tid in o['type_ids']}))
@@ -69,11 +88,16 @@ class MapTools:
         data = dict(scene_name=self.store.scene['name'], rooms=rooms, semantic_types=types,
                     object_count=len(objects), count_unit='object_record',
                     capabilities=dict(label_search=capability(True, ''),
-                                      visual_search=capability(visual, 'Matching local text encoder not configured'),
-                                      object_images=image_cap),
+                                      visual_search=capability(visual and self.retriever.channel == 'visual', 'Image-only vector retrieval not active'),
+                                      multimodal_search=capability(visual and self.retriever.channel == 'multimodal', 'Mixed vector retrieval not active'),
+                                      object_descriptions=covered(descriptions, 'Some or all object descriptions are unavailable'),
+                                      object_images=covered(images, 'Some or all valid object images are unavailable')),
+                    coverage=coverage,
+                    retrieval=dict(mode=self.retriever.channel if visual else 'label', indexed_object_count=indexed),
                     coordinate_frame=self.store.scene['coordinate_frame'],
                     query_policy=dict(policy_id='default-v1', visual_top_k=self.retriever.top_k,
-                                      max_queries=4, max_inspect_ids=8))
+                                      max_queries=self.schemas['search_candidates']['inputSchema']['properties']['queries']['maxItems'],
+                                      max_inspect_ids=self.schemas['inspect_objects']['inputSchema']['properties']['ids']['maxItems']))
         return self._result('list_scene', data, limitations=self.store.scene['provenance'])
 
     def _recall(self, tool, room_ids=(), queries=()):
@@ -93,6 +117,7 @@ class MapTools:
                 if oid not in candidates:
                     item = by_id[oid]
                     candidates[oid] = dict(object_id=oid, label=item['label'], room_ids=item['room_ids'],
+                                           description=item['description'],
                                            matched_queries=[], match_basis=[], scores=[])
                 row = candidates[oid]
                 row['matched_queries'].append(query)
@@ -136,8 +161,7 @@ class MapTools:
             row = {k: item[k] for k in ['object_id', 'label', 'type_ids', 'room_ids',
                    'center_xyz', 'bbox', 'attributes', 'identity_status', 'entity_id', 'source_links']}
             row.update(source_refs=item['provenance'], evidence=[], limitations=[])
-            links = sorted(item['observation_links'],
-                           key=lambda l: (l['target_support'] != 'valid', l['observation_id']))[:2]
+            links = self.renderer.selected_links(item)
             for link in links:
                 evidence, payload = self.renderer.evidence(item, link)
                 row['evidence'].append(evidence)

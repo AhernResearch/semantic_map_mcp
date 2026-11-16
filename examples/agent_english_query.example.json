@@ -1,0 +1,7 @@
+{
+  "tool": "search_candidates",
+  "arguments": {
+    "queries": ["a white storage cabinet"],
+    "page": 1
+  }
+}

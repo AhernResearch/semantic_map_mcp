@@ -1,0 +1,72 @@
+{
+  "request": {
+    "instruction": "就会议室那个吧",
+    "context": "用户此前想找能坐下来讨论、还能展示内容的地方。上轮提供会议室和走廊休息区两个选项，等待用户选择。",
+    "think_mode": "fast"
+  },
+  "response": {
+    "schema_version": "1.0.0",
+    "tool": "deep_search",
+    "scene_id": "example",
+    "snapshot_id": "example-snapshot",
+    "status": "ok",
+    "trace_id": "example-trace",
+    "metrics": {
+      "seconds": 2.5,
+      "model_calls": 1,
+      "tool_calls": 0,
+      "model_seconds": 2.4,
+      "tool_seconds": 0
+    },
+    "data": {
+      "answer": "可以选择会议室，那里有会议桌椅、显示屏和白板。",
+      "grounding": {
+        "status": "resolved",
+        "room_ids": [
+          "R01"
+        ],
+        "object_ids": [],
+        "evidence_ids": [
+          "card-example"
+        ],
+        "reason": "可以选择会议室，那里有会议桌椅、显示屏和白板。",
+        "question": null,
+        "excluded_ids": []
+      },
+      "selection": {
+        "selected_id": null,
+        "selected_room_id": "R01",
+        "candidate_ids": [],
+        "candidate_room_ids": [
+          "R01"
+        ],
+        "excluded_ids": []
+      },
+      "evidence": [
+        {
+          "evidence_id": "card-example",
+          "kind": "card",
+          "object_ids": [],
+          "room_ids": [
+            "R01"
+          ],
+          "text": "区域卡片中包含会议桌椅、显示屏和白板。"
+        }
+      ],
+      "navigation": {
+        "status": "blocked",
+        "goal": null,
+        "reason": "No verified navigation binding"
+      },
+      "handoff": "not_ready"
+    },
+    "media": [],
+    "errors": [],
+    "limitations": [],
+    "execution": {
+      "think_mode": "fast",
+      "model": "qwen35-9b-fp8",
+      "api_format": "chat_completions"
+    }
+  }
+}

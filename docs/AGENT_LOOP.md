@@ -1,5 +1,7 @@
 # 候选驱动的看图 Agent 原型
 
+MCP高层[deep_search](DEEP_SEARCH.md)复用本文件对应的唯一run_agent循环，以显式配置启用预置区域卡片、区域或物体决策、严格原生工具提交及截止时间；原有本地Agent默认行为保留。context为必要前文摘要，不赋予对象或证据引用资格。
+
 2026-11-11。目标是验证“检索 → 取证 → 选择或澄清”。这是本地只读原型，不是部署完成或导航验收。
 
 ## 执行流程
@@ -22,24 +24,24 @@ search_candidates 不渲染，使用与 view_map 相同的标签/CLIP召回、�
 
 宿主始终附加 navigation={status:blocked, goal:null} 与 handoff=not_ready。没有站位绑定、可通行性或真机执行。显式ID请求也暂要求 inspect 后才 resolved，这是本次视觉验证的保守约束。
 
-完整系统 prompt 在 `src/map_query_tools/agent.py:PROMPT`，输出约束在 `schemas/grounding_decision.json`。当前没有复杂空间计算、用户方位、会话确认状态机或全场景未知对象检测。
+完整系统 prompt 在 `src/sementic_map_mcp/agent.py:PROMPT`，输出约束在 `schemas/grounding_decision.json`。当前没有复杂空间计算、用户方位、会话确认状态机或全场景未知对象检测。
 
 ## 运行
 
 工作区根目录运行；模型必须支持 chat-completions 的 image_url 数据图片输入。endpoint 与 model 由宿主显式指定，不自动发现或启动服务。办公场景仅使用已获授权的内网接口；如需凭据，通过 MAP_AGENT_API_KEY 环境变量注入，不写日志。
 
 ```bash
-PYTHONPATH=map_query_tools/src HF_HUB_OFFLINE=1 envs/cg/bin/python \
-  map_query_tools/scripts/prepare_grounding_cases.py \
-  map_query_tools/local_data/mfloor-v1 \
-  map_query_tools/runs/mfloor_smoke/encoder.json \
-  map_query_tools/runs/pilot-evidence-new
+PYTHONPATH=sementic_map_mcp/src HF_HUB_OFFLINE=1 envs/cg/bin/python \
+  sementic_map_mcp/scripts/prepare_grounding_cases.py \
+  sementic_map_mcp/local_data/mfloor-v1 \
+  sementic_map_mcp/runs/mfloor_smoke/encoder.json \
+  sementic_map_mcp/runs/pilot-evidence-new
 
-PYTHONPATH=map_query_tools/src HF_HUB_OFFLINE=1 envs/cg/bin/python \
-  map_query_tools/scripts/run_grounding_agent.py \
-  map_query_tools/local_data/mfloor-v1 \
-  map_query_tools/runs/mfloor_smoke/encoder.json \
-  map_query_tools/runs/pilot-agent-new \
+PYTHONPATH=sementic_map_mcp/src HF_HUB_OFFLINE=1 envs/cg/bin/python \
+  sementic_map_mcp/scripts/run_grounding_agent.py \
+  sementic_map_mcp/local_data/mfloor-v1 \
+  sementic_map_mcp/runs/mfloor_smoke/encoder.json \
+  sementic_map_mcp/runs/pilot-agent-new \
   --endpoint http://HOST:PORT/v1 --model MODEL
 ```
 
@@ -107,3 +109,31 @@ NG02：首轮候选27→5，物体图16→5（新版另1张空间图），模型
 NG03：首轮候选19→5，物体图8→4（新版另1张空间图），模型请求4→5，工具调用4→6；旧版约24.50秒（文件时间估算），新版25.98秒（运行计时）。两版都选S135。图片和首屏候选减少，调用轮次反而增加，不能宣称整体提速。
 
 指标原文：runs/compact_online_20261111/comparison.json。页面：/updates/compact_compare_v2_20261111/comparison.html（既有18765服务）。11次媒体引用与实际请求字节核对，Chrome页面/图片HTTP200。首次导出因精简媒体无uri失败，已修正为按media_id从原始工具数据获取路径；失败目录compact_compare_20261111保留，新目录成功导出。未修改本轮运行结果。
+
+### 检索拼图试验
+
+默认检索直接返回当页最多5个候选的单张拼图，足以判断时可在下一轮 finish；需要细节再 inspect_objects。实现与 MCP 共用 preview.call_for_model，映射及缺图规则见 TOOL_CONTRACT.md。run_agent(..., search_preview=False) 与 chat(..., search_preview=False) 可用于旧流程对照。
+
+本次前置优化还加入单 MapTools 实例最多32个请求的快照内结果缓存（返回深拷贝，PNG字节不改）以及模型/工具分段计时。这些改动均不改变召回算法或编码器。
+
+首轮真实Sonnet对照已完成，未证明整轮提速：旧流程两例均超时；拼图流程“打印机”4轮约68秒返回证据不足，“白色柜子”5轮约361秒返回澄清。详见SEARCH_PREVIEW_TRIAL_20261111.md，不将工具通路成功当作模型性能验收。
+
+固定候选/同像素的图片组织对照：见FIXED_PACKING_AB_20261111.md及scripts/compare_image_packing.py。该实验只有一次冻结候选判断，不能把其约9秒耗时称为完整Agent任务耗时。
+
+完整自由运行Agent对照已完成，见FULL_AGENT_PACKING_AB_20261111.md。打印机单图/拼图33.19/18.57秒，均3轮选S135；白色柜子49.07/59.12秒，分别4/5轮且澄清问题不同。本轮没有证实拼图稳定提速。Python宿主可用image_packing='single'做对照，默认仍montage；两组统一称“物体图片”。
+
+[工具与模型分项耗时](TOOL_MODEL_LATENCY_20261111.md)：最新4任务模型等待占94.6%；15次Sonnet请求均值10.08秒。工具补充实测单独标注本地/缓存条件，历史120秒超时保留，不与最新成功均值混算。
+
+[降低分辨率对照](RESOLUTION_AB_20261111.md)：固定候选的1800×800→1200×533对照中，平均请求耗时约降39%–42%，token约降43%；完整Agent仍有工具参数失败/判断分叉，不能宣称稳定端到端提速。历史前缀逐轮检查未改写，缓存字段为0不能认定已命中。
+
+[单图宽高减半对照](HALF_SINGLE_AB_20261111.md)：600×400→300×200，保留5候选与完整历史，输入token约降56%；完整打印机任务从选中S135变为证据不足（S135未进入半尺寸组实际图片），不能当成同等效果提速。新参数single_max_width=300为显式试验选项。
+
+[英文查询/及时决策策略](ENGLISH_QUERY_POLICY_20261111.md)：模型queries改为必须英文，首轮优先具体短语，明确匹配/具体歧义及时结束；改写查询须重置page=1。真实调用已全部英文，但描述仍未保证分页合规或稳定提速；旧对照和v2补充试跑分别冻结。8880试验端已刷新描述，8879主实例保持原样。
+
+### 离线描述试验（2026-11-12）
+
+显式配置sidecar后搜索返回英文外观描述；关键细节不足时仍可inspect_objects。脚本run_grounding_agent.py支持--descriptions PATH，宿主和chat工具说明同步启用。证据ID可为实际返回的description_id，不能引用其他对象的描述来确认目标。未修改既有MCP服务或默认召回。生成协议与并发脚本见[OFFLINE_DESCRIPTIONS.md](OFFLINE_DESCRIPTIONS.md)，结构测试不代替语义或耗时验收。
+
+后续按用户要求导出含描述的新统一场景：SceneStore自动读取description_generation与对象description_metadata，MapTools和run_grounding_agent.py同步识别，无需再指定sidecar。主要外观文本存入description，原始OCR等描述保留在description_metadata.original_description并继续参与检索；旧包行为不变。新snapshot_id需要匹配的新任务集，既有任务集不会跨快照自动复用。实际新包路径和CLI见OFFLINE_DESCRIPTIONS.md。
+
+真实MCP完整任务见[MCP_AGENT_E2E_20261112.md](MCP_AGENT_E2E_20261112.md)。run_agent可显式注入tool_executor和tool_definitions以复用同一模型循环；chat可传tools及request_log记录真实请求正文。默认本地调用行为保留。描述优先模式同步调整系统提示中的“先看图片”为“先读描述，关键细节不足再看图”。MCP运行器的*-tool.json是MCP SDK原始结果，服务端原始MapTools审计另存，不能混称。

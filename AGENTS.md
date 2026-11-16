@@ -1,9 +1,11 @@
-# map_query_tools 开发约定
+# sementic_map_mcp 开发约定
 
-遵守上级AGENTS.md。本目录是新建只读地图查询模块，实现范围为本地只读工具，不代表已部署远程服务。
+遵守上级AGENTS.md。本目录包含只读地图工具与独立HTTP/stdio MCP服务；具体在线部署状态以拥有者记录为准。
 
 - 规范以 docs/DATA_CONTRACT.md、docs/TOOL_CONTRACT.md 和 schemas/ 为准，变更时同步示例与Python接口。
 - 当前已实现 list_scene、search_candidates、view_map、inspect_objects。后续接口按 docs/TASK_GROUNDING.md 的真实任务需求决定，不以“必须三工具”或“必须看图”约束任务；新增接口需保持简洁并同步契约。
+- MCP可显式配置deep_search：复用唯一run_agent循环，接收原始instruction及可选文本context，预置快照绑定区域卡片。区域目标须卡片证据，物体目标须已提供的描述/图片；context不提供证据资格。配置、预算、取消和错误见docs/DEEP_SEARCH.md；未配置/未部署不冒称正式服务可用。
+- deep_search的think_mode为fast（默认本地Qwen3.5-9B）、middle（Sonnet）、strong（GPT-6 Sol）；服务端profiles显式配置，不自动重试或换档。复用本项目唯一Agent循环和Responses适配器，保留推理项、实际wire记录与图像字节。运行入口和验证结果见docs/DEEP_SEARCH.md。
 - 源文件只读；scene.json是交换包元数据权威来源，SQLite/向量索引是可重建缓存。
 - 工具实例绑定场景快照；对象ID不自动映射导航ID，不跨快照混用。
 - 向量模型身份、有效标记、坐标变换和图片来源必须保留。相似度不是概率，关联不是同物真值。
@@ -36,3 +38,13 @@
 - 原始工具JSON与模型实际收到的JSON分别存为*-tool.json和*-model-context.json；不得把原始审计数据误称为已全部发给模型。
 
 - Agent上下文按需获取：候选每页5个（page/next_page），每次最多查看3个对象、每对象1张图（view/next_view）。保留底层召回截断标记，不把当前候选池当全场景。宿主selection区分candidate_ids、excluded_ids、selected_id。原始API与trace保留完整数据。
+
+- 检索拼图试验（用户授权）：Agent/MCP search_candidates 当前页最多5个候选各取1视角合成1张图；inspect_objects仍最多3对象、每对象1视角。复用preview.call_for_model，保留缺图和原图坐标映射；*-preview.json保存宿主派生图片的原始审计数据。拼图只为实际有图的ID提供证据，原始search接口不改。
+
+- 完整Agent图片组织对照：宿主image_packing可为montage（默认）或single，模型提示/工具说明统一称“物体图片”。single为同一拼图格子的原像素拆分，保留实际媒体ID和局部面板坐标。计时区分一次性场景/模型加载、完整Agent任务和冻结候选单次判断；自由Agent查询分叉时，不把耗时差直接解释为图片拼接的因果收益。
+
+- 模型工具queries要求英文，规则由agent.ENGLISH_QUERY_POLICY共享；源标签、用户指令/回答不强制英文，原始中文API保留。模型需改写查询时重置page=1；描述约束不冒充服务端语言/分页状态硬校验，真实trace须核验遵守情况。
+
+- 当前主线（2026-11-12，用户授权）：Qwen3-VL-Embedding-2B图文混合召回，默认检索返回文本描述，图片仅按需inspect_objects/view_map。新快照内嵌描述及混合特征；每视角向量按对象取最大余弦后去重，再与词法通道RRF合并。混合模型/描述/有效图像绑定按multimodal_index.schema.json验证，不自动回退CLIP。旧无描述包的拼图行为保留作兼容路径；主线配置与服务见docs/MIXED_RECALL_MAINLINE_20261112.md。
+
+- MCP HTTP/stdio服务、工具注册、deep_search及其模型调用属于本项目；不得运行时导入open_nav_harness或navgpt。Harness只通过MCP协议接入。

@@ -1,19 +1,25 @@
 """Deterministic topdown pages and object evidence panels."""
 import hashlib
 import io
+from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 from .ports import MediaPayload
 
 FONT = '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc'
+PAGE_SIZE, MAX_PAGES = 24, 8
 COLORS = ['#e64b35', '#2878b5', '#30964b', '#9957b5']
 
 
 class Renderer:
-    def __init__(self, store, output, font=FONT):
-        from pathlib import Path
+    def __init__(self, store, output, font=FONT, montage_max_width=None, single_max_width=None):
+        for name, value in [('montage_max_width', montage_max_width), ('single_max_width', single_max_width)]:
+            if value is not None and (type(value) is not int or value < 1):
+                raise ValueError(name + ' must be a positive integer')
+        self.montage_max_width = montage_max_width
+        self.single_max_width = single_max_width
         self.store, self.output = store, Path(output)
         self.output.mkdir(parents=True, exist_ok=True)
         self.font = ImageFont.truetype(font, 17)
@@ -35,7 +41,7 @@ class Renderer:
     def maps(self, objects, room_ids, groups):
         # Every page uses the same room extent, so positions stay comparable.
         ordered = sorted(objects, key=lambda o: (o['center_xyz'][2], o['center_xyz'][0], o['object_id']))
-        pages = [ordered[i:i + 24] for i in range(0, len(ordered), 24)] or [[]]
+        pages = [ordered[i:i + PAGE_SIZE] for i in range(0, len(ordered), PAGE_SIZE)] or [[]]
         rooms = [r for rid, r in self.store.rooms.items() if not room_ids or rid in room_ids]
         extents = [] if objects else [r['bounds_xz'] for r in rooms if r['bounds_xz']]
         extents += [[o['center_xyz'][0], o['center_xyz'][2],
@@ -70,7 +76,6 @@ class Renderer:
                 pixels = project(local[:, [0, 2]]).astype(int)
                 density = np.zeros((900, 1200), dtype=np.float32)
                 np.add.at(density, (pixels[:, 1], pixels[:, 0]), 1)
-                from PIL import ImageFilter
                 density = np.asarray(Image.fromarray(np.minimum(density * 35, 255).astype('uint8')).filter(
                     ImageFilter.GaussianBlur(.7)), dtype=float) / 255
                 rgb = np.array(background, dtype=float)
@@ -86,7 +91,7 @@ class Renderer:
                 bd.rectangle((*pa, *pb), outline='#d0d9e2', width=1)
 
         maps, media = [], []
-        for page_index, page in enumerate(pages[:8]):
+        for page_index, page in enumerate(pages[:MAX_PAGES]):
             image = background.copy()
             draw = ImageDraw.Draw(image)
             legend = [dict(query=g['query'], color=COLORS[i], meaning='候选物体')
@@ -156,7 +161,84 @@ class Renderer:
                              media_id=payload.metadata['media_id'], room_ids=list(room_ids),
                              object_ids=ids, bounds_xz=[*lo.tolist(), *hi.tolist()],
                              world_to_pixel=matrix.tolist(), legend=legend, page_index=page_index))
-        return maps, media, [o['object_id'] for o in ordered[192:]]
+        return maps, media, [o['object_id'] for o in ordered[PAGE_SIZE * MAX_PAGES:]]
+
+    @staticmethod
+    def selected_links(item):
+        return sorted(item['observation_links'],
+                      key=lambda l: (l['target_support'] != 'valid', l['observation_id']))[:2]
+
+    @staticmethod
+    def resize_preview(image, cells, max_width):
+        if max_width is None or image.width <= max_width:
+            return image, cells
+        height = max(1, round(image.height * max_width / image.width))
+        sx, sy = max_width / image.width, height / image.height
+        image = image.resize((max_width, height), Image.Resampling.LANCZOS)
+        def scaled(box):
+            return [box[0] * sx, box[1] * sy, box[2] * sx, box[3] * sy]
+        cells = [dict(c, cell_xyxy=scaled(c['cell_xyxy']),
+            panels=[dict(p, panel_xyxy=scaled(p['panel_xyxy'])) for p in c['panels']]) for c in cells]
+        return image, cells
+
+    def candidate_sheet(self, objects, packing='montage'):
+        if packing not in ('montage', 'single'):
+            raise ValueError('Unknown candidate image packing')
+        if packing == 'single' and self.montage_max_width is not None:
+            raise ValueError('montage_max_width requires montage packing')
+        if packing == 'montage' and self.single_max_width is not None:
+            raise ValueError('single_max_width requires single packing')
+        if not objects:
+            return None, ()
+        columns = min(3, len(objects))
+        canvas = Image.new('RGB', (columns * 600, ((len(objects) + columns - 1) // columns) * 400), 'white')
+        draw = ImageDraw.Draw(canvas)
+        cells, missing, observation_ids, shown = [], [], [], []
+        for i, item in enumerate(objects):
+            x, y = i % columns * 600, i // columns * 400
+            draw.rectangle((x, y, x + 599, y + 399), outline='#aab4c0', width=2)
+            draw.text((x + 10, y + 8), item['object_id'] + ' | ' + item['label'][:20],
+                      font=self.font, fill='black')
+            links = self.selected_links(item)
+            if not links:
+                missing.append(item['object_id'])
+                draw.text((x + 10, y + 70), '缺少物体图片', font=self.font, fill='#555555')
+                continue
+            evidence, payload = self.evidence(item, links[0])
+            with Image.open(io.BytesIO(payload.content)) as source:
+                image = source.convert('RGB')
+            original_size = image.size
+            image.thumbnail((600, 340))
+            canvas.paste(image, (x, y + 50))
+            sx, sy = image.width / original_size[0], image.height / original_size[1]
+            panels = [dict(p, panel_xyxy=[x + p['panel_xyxy'][0] * sx,
+                y + 50 + p['panel_xyxy'][1] * sy, x + p['panel_xyxy'][2] * sx,
+                y + 50 + p['panel_xyxy'][3] * sy]) for p in evidence['panels']]
+            cells.append(dict(object_id=item['object_id'], observation_id=evidence['observation_id'],
+                source_kind=evidence['source_kind'], source_media_id=evidence['media_id'],
+                target_support=links[0]['target_support'],
+                cell_xyxy=[x, y, x + 600, y + 400], panels=panels,
+                next_view=2 if len(links) > 1 else None))
+            shown.append(item['object_id'])
+            observation_ids.append(evidence['observation_id'])
+        if packing == 'montage':
+            canvas, cells = self.resize_preview(canvas, cells, self.montage_max_width)
+        media = self.save(canvas, 'evidence_panel', shown, observation_ids)
+        if packing == 'montage':
+            return dict(media_id=media.metadata['media_id'], cells=cells, missing_ids=missing,
+                        media=[media.metadata]), (media,)
+        singles, local_cells = [], []
+        for cell in cells:
+            x, y, x1, y1 = cell['cell_xyxy']
+            panels = [dict(p, panel_xyxy=[p['panel_xyxy'][0] - x, p['panel_xyxy'][1] - y,
+                p['panel_xyxy'][2] - x, p['panel_xyxy'][3] - y]) for p in cell['panels']]
+            local_cell = dict(cell, cell_xyxy=[0, 0, x1 - x, y1 - y], panels=panels)
+            image, resized = self.resize_preview(canvas.crop((x, y, x1, y1)), [local_cell], self.single_max_width)
+            tile = self.save(image, 'evidence_panel', [cell['object_id']], [cell['observation_id']])
+            singles.append(tile)
+            local_cells.append(dict(resized[0], media_id=tile.metadata['media_id']))
+        return dict(media_id=None, cells=local_cells, missing_ids=missing,
+                    media=[m.metadata for m in singles]), tuple(singles)
 
     def evidence(self, item, link):
         obs = self.store.observations[link['observation_id']]

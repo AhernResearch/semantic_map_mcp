@@ -2,8 +2,8 @@
 import argparse
 from pathlib import Path
 
-from map_query_tools.retrieval import OpenClipEncoder, Retriever
-from map_query_tools.store import SceneStore, read_json, write_json
+from sementic_map_mcp.retrieval import OpenClipEncoder, Retriever
+from sementic_map_mcp.store import SceneStore, write_json
 
 
 def main():
@@ -14,8 +14,7 @@ def main():
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
     store = SceneStore(args.scene)
-    config = read_json(args.encoder_config)
-    encoder = OpenClipEncoder(store.feature_spaces[config['space_id']], config)
+    encoder = OpenClipEncoder.from_config(store, args.encoder_config)
     retriever = Retriever(store, encoder)
     probes = [
         ('NG02', '柜子', []),

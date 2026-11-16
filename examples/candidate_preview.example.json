@@ -1,0 +1,57 @@
+{
+  "media_id": "example-sheet",
+  "missing_ids": [],
+  "cells": [
+    {
+      "object_id": "demo-01",
+      "observation_id": "example-view",
+      "source_kind": "real_camera",
+      "source_media_id": "example-panel",
+      "target_support": "valid",
+      "cell_xyxy": [
+        0,
+        0,
+        600,
+        400
+      ],
+      "panels": [
+        {
+          "kind": "full",
+          "panel_xyxy": [
+            10,
+            90,
+            590,
+            380
+          ],
+          "original_crop_xyxy": [
+            0,
+            0,
+            1160,
+            580
+          ],
+          "original_size": [
+            1160,
+            580
+          ]
+        }
+      ],
+      "next_view": null
+    }
+  ],
+  "media": [
+    {
+      "media_id": "example-sheet",
+      "uri": "/example-output/example-sheet.png",
+      "mime_type": "image/png",
+      "width": 600,
+      "height": 400,
+      "source_kind": "evidence_panel",
+      "object_ids": [
+        "demo-01"
+      ],
+      "observation_ids": [
+        "example-view"
+      ]
+    }
+  ]
+}
